@@ -1,12 +1,13 @@
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONException;
+
 public class TestProgram extends SunnyMilkFuzzer {
-    int called = 0;
     public void FuzzOne(String s) {
-        if (called % 2 == 0) {
-            System.out.println("It's even.");
-        } else {
-            System.out.println("It's odd.");
+        try {
+            JSON.parse(s);
+        } catch (JSONException ignored) {
+            return;
         }
-        ++called;
     }
 
     public static void main(String[] args) {

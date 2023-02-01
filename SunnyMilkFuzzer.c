@@ -5,9 +5,8 @@
 JNIEXPORT void JNICALL Java_SunnyMilkFuzzer_PrintCoverage
   (JNIEnv * env, jobject o) {
     int* coverage_table = (*env)->GetSunnyMilkFuzzerCoverage();
-    for (int i = 0; i < 10; ++i) {
-        printf("%d ",coverage_table[i]);
+    for (int i = 0; i < 10000; ++i) {
+        coverage_table[i];
     }
-    printf("\n");
     return;
 }
