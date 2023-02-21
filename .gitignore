@@ -3,3 +3,6 @@
 *.class
 
 *.so
+
+.vscode/
+.metals/

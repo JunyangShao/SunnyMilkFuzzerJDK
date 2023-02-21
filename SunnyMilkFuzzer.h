@@ -9,11 +9,43 @@ extern "C" {
 #endif
 /*
  * Class:     SunnyMilkFuzzer
- * Method:    PrintCoverage
+ * Method:    HasNewCoverage
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_SunnyMilkFuzzer_HasNewCoverage
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     SunnyMilkFuzzer
+ * Method:    SetCoverageTracing
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_SunnyMilkFuzzer_PrintCoverage
+JNIEXPORT void JNICALL Java_SunnyMilkFuzzer_SetCoverageTracing
   (JNIEnv *, jobject);
+
+/*
+ * Class:     SunnyMilkFuzzer
+ * Method:    UnsetCoverageTracing
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_SunnyMilkFuzzer_UnsetCoverageTracing
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     SunnyMilkFuzzer
+ * Method:    ClearCoverageMap
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_SunnyMilkFuzzer_ClearCoverageMap
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     SunnyMilkFuzzer
+ * Method:    Mutate
+ * Signature: (Ljava/lang/String;I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_SunnyMilkFuzzer_Mutate
+  (JNIEnv *, jobject, jstring, jint);
 
 #ifdef __cplusplus
 }
