@@ -5,13 +5,13 @@
 #include <stdlib.h>
 #include <time.h>
 
-int SMF_table[1 << 14];
+unsigned char SMF_table[1 << 16];
 
 JNIEXPORT jboolean JNICALL Java_SunnyMilkFuzzer_HasNewCoverage
   (JNIEnv * env, jobject o) {
     int ret = 0;
-    int* coverage_table = (*env)->GetSunnyMilkFuzzerCoverage();
-    for (int i = 0; i < (1 << 14); ++i) {
+    unsigned char* coverage_table = (*env)->GetSunnyMilkFuzzerCoverage();
+    for (int i = 0; i < (1 << 16); ++i) {
         if(coverage_table[i] == 1 && SMF_table[i] == 0) {
             SMF_table[i] = 1;
             ret = 1;
@@ -37,7 +37,7 @@ JNIEXPORT void JNICALL Java_SunnyMilkFuzzer_ClearCoverageMap
     time_t t;
     srand((unsigned) time(&t));
     (*env)->ClearSMFTable();
-    memset(SMF_table, 0, (1<<14) * sizeof(int));
+    memset(SMF_table, 0, (1<<16) * sizeof(unsigned char));
     return;
 }
 

@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <jni.h>
+#include <cstdint>
+#include "FuzzerDefs.h"
+#include "FuzzerPlatform.h"
+#include "FuzzerTracePC.h"
+
+JNIEnv *env;
+jclass cls;
+jmethodID fuzz_one_method;
+
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
+    // Convert the uint8_t array to a jchar array
+    jchar *jcharData = new jchar[Size];
+    for (size_t i = 0; i < Size; ++i) {
+        jcharData[i] = static_cast<jchar>(Data[i]);
+    }
+
+    // Create a jstring from the jchar array and the given size
+    jstring input_str = env->NewString(jcharData, Size);
+
+    // Call the Java method with the created jstring
+    env->SetSMFBegin();
+    env->CallStaticVoidMethod(cls, fuzz_one_method, input_str);
+    env->UnsetSMFBegin();
+    
+    // Check for exceptions
+    if (env->ExceptionOccurred()) {
+        env->ExceptionDescribe();
+        abort();
+    }
+
+    // Clean up the jchar array
+    delete[] jcharData;
+
+    return 0; // Return a value to match the int return type
+}
+
+int main(int argc, char *argv[]) {
+    if (argc < 3) {
+        fprintf(stderr, "Usage: %s [libFuzzerArguments]* <JavaClassName>\n", argv[0]);
+        return 1;
+    }
+
+    JavaVM *jvm;
+    JavaVMInitArgs vm_args;
+    JavaVMOption options[1];
+
+    options[0].optionString = "-Djava.class.path=./"; // Set classpath here
+    vm_args.version = JNI_VERSION_1_6;
+    vm_args.options = options;
+    vm_args.nOptions = 1;
+    vm_args.ignoreUnrecognized = JNI_FALSE;
+
+    jint res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
+    if (res != JNI_OK) {
+        fprintf(stderr, "Error: Failed to create JVM. Error code: %d\n", res);
+        return 1;
+    }
+
+    uint8_t* ctrs = env->GetSunnyMilkFuzzerCoverage();
+    fuzzer::TPC.HandleInline8bitCountersInit(ctrs, ctrs + (1 << 16));
+
+    const char *class_name = argv[2];
+    cls = env->FindClass(class_name);
+    if (cls == NULL) {
+        fprintf(stderr, "Error: Failed to find class '%s'\n", class_name);
+        return 1;
+    }
+
+    // Find the FuzzOne method in the class
+    fuzz_one_method = env->GetStaticMethodID(cls, "FuzzOne", "(Ljava/lang/String;)V");
+    if (fuzz_one_method == NULL) {
+        fprintf(stderr, "Error: Failed to find method FuzzOne\n");
+        return 1;
+    }
+    // Create a jstring object for the input string "Hello World"
+
+    --argc;
+    int ret = fuzzer::FuzzerDriver(&argc, &argv, LLVMFuzzerTestOneInput);
+    
+    jvm->DestroyJavaVM();
+    
+    return ret;
+}
