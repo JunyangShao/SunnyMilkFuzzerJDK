@@ -1,5 +1,7 @@
-public class TestProgram2 extends SunnyMilkFuzzer {
-    public void FuzzOne(String s) {
+public class LibFuzzerTest1 {
+    // print hello world
+    public static void FuzzOne(String s) {
+        System.out.println(s);
         if (s.length() > 0) {
             if (s.charAt(0) == 'f') {
                 if (s.length() > 1) {
@@ -18,9 +20,5 @@ public class TestProgram2 extends SunnyMilkFuzzer {
                 }
             }
         }
-    }
-
-    public static void main(String[] args) {
-        new TestProgram2().Loop();
     }
 }

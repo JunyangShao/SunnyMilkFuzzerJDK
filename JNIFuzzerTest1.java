@@ -1,7 +1,7 @@
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 
-public class TestProgram extends SunnyMilkFuzzer {
+public class JNIFuzzerTest1 extends SunnyMilkFuzzer {
     public void FuzzOne(String s) {
         try {
             JSON.parse(s);
@@ -11,6 +11,6 @@ public class TestProgram extends SunnyMilkFuzzer {
     }
 
     public static void main(String[] args) {
-        new TestProgram().Loop();
+        new JNIFuzzerTest1().Loop();
     }
 }
