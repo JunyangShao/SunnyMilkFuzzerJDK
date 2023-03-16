@@ -1,6 +1,7 @@
 public class LauncherTest {
     // print hello world
     public static void FuzzOne(String s) {
+        System.out.println(s);
         if (s.length() > 0) {
             if (s.charAt(0) == 'f') {
                 if (s.length() > 1) {
