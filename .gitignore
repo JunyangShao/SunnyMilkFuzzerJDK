@@ -9,3 +9,5 @@
 
 crash-*
 oom-*
+
+FuzzerLauncher
