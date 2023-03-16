@@ -44,12 +44,13 @@ int main(int argc, char *argv[]) {
 
     JavaVM *jvm;
     JavaVMInitArgs vm_args;
-    JavaVMOption options[1];
+    JavaVMOption options[2];
 
-    options[0].optionString = "-Djava.class.path=./"; // Set classpath here
+    options[0].optionString = "-Djava.class.path=./:./fastjson-1.2.75.jar"; // Set classpath here
+    options[1].optionString = "-Xint";
     vm_args.version = JNI_VERSION_1_6;
     vm_args.options = options;
-    vm_args.nOptions = 1;
+    vm_args.nOptions = 2;
     vm_args.ignoreUnrecognized = JNI_FALSE;
 
     jint res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
@@ -60,6 +61,7 @@ int main(int argc, char *argv[]) {
 
     uint8_t* ctrs = env->GetSunnyMilkFuzzerCoverage();
     fuzzer::TPC.HandleInline8bitCountersInit(ctrs, ctrs + (1 << 16));
+    env->ClearSMFTable();
 
     const char *class_name = argv[2];
     cls = env->FindClass(class_name);
