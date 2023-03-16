@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     options[1].optionString = "-Xint";
     vm_args.version = JNI_VERSION_1_6;
     vm_args.options = options;
-    vm_args.nOptions = 2;
+    vm_args.nOptions = 1;
     vm_args.ignoreUnrecognized = JNI_FALSE;
 
     jint res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
@@ -77,6 +77,11 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     // Create a jstring object for the input string "Hello World"
+
+    jmethodID fuzzer_init_method = env->GetStaticMethodID(cls, "FuzzerInit", "()V");
+    if (fuzzer_init_method != NULL) {
+        env->CallStaticVoidMethod(cls, fuzzer_init_method);
+    }
 
     --argc;
     int ret = fuzzer::FuzzerDriver(&argc, &argv, LLVMFuzzerTestOneInput);
