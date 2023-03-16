@@ -6,3 +6,6 @@
 
 .vscode/
 .metals/
+
+crash-*
+oom-*

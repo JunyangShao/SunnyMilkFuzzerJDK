@@ -9,4 +9,6 @@ g++ -fPIC -pthread -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -I./fuzze
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server
 
-./FuzzerLauncher fuzzerOut LauncherTest
+mkdir fuzzerOut
+./FuzzerLauncher fuzzerOut $1
+rm -r fuzzerOut
