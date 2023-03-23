@@ -1,1 +1,1 @@
-cd SunnyMilkJDK && git pull && sh configure && make CONF=release images
+cd SunnyMilkJDK && git pull && make CONF=release images

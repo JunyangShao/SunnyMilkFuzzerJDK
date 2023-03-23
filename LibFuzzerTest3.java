@@ -19,7 +19,30 @@ import com.alibaba.fastjson.JSONException;
 public class LibFuzzerTest3 {
   private static int cnt = 0;
   private static long time_elapsed = 0;
-  private static final String s = "\r\n{\r\n    \"glossary\": {\r\n        \"title\": \"example glossary\",\r\n\t\t\"GlossDiv\": {\r\n            \"title\": \"S\",\r\n\t\t\t\"GlossList\": {\r\n                \"GlossEntry\": {\r\n                    \"ID\": \"SGML\",\r\n\t\t\t\t\t\"SortAs\": \"SGML\",\r\n\t\t\t\t\t\"GlossTerm\": \"Standard Generalized Markup Language\",\r\n\t\t\t\t\t\"Acronym\": \"SGML\",\r\n\t\t\t\t\t\"Abbrev\": \"ISO 8879:1986\",\r\n\t\t\t\t\t\"GlossDef\": {\r\n                        \"para\": \"A meta-markup language, used to create markup languages such as DocBook.\",\r\n\t\t\t\t\t\t\"GlossSeeAlso\": [\"GML\", \"XML\"]\r\n                    },\r\n\t\t\t\t\t\"GlossSee\": \"markup\"\r\n                }\r\n            }\r\n        }\r\n    }\r\n}";
+  // A long string to make sure the workload is not trivial.
+  private static final String s =
+  "\r\n{\r\n" +
+  "    \"glossary\": {\r\n" +
+  "        \"title\": \"example glossary\",\r\n" +
+  "        \"GlossDiv\": {\r\n" +
+  "            \"title\": \"S\",\r\n" +
+  "            \"GlossList\": {\r\n" +
+  "                \"GlossEntry\": {\r\n" +
+  "                    \"ID\": \"SGML\",\r\n" +
+  "                    \"SortAs\": \"SGML\",\r\n" +
+  "                    \"GlossTerm\": \"Standard Generalized Markup Language\",\r\n" +
+  "                    \"Acronym\": \"SGML\",\r\n" +
+  "                    \"Abbrev\": \"ISO 8879:1986\",\r\n" +
+  "                    \"GlossDef\": {\r\n" +
+  "                        \"para\": \"A meta-markup language, used to create markup languages such as DocBook.\",\r\n" +
+  "                        \"GlossSeeAlso\": [\"GML\", \"XML\"]\r\n" +
+  "                    },\r\n" +
+  "                    \"GlossSee\": \"markup\"\r\n" +
+  "                }\r\n" +
+  "            }\r\n" +
+  "        }\r\n" +
+  "    }\r\n" +
+  "}";
   public static void FuzzerInit() {
     // Optional initialization to be run before the first call to fuzzerTestOneInput.
     time_elapsed = 0;
