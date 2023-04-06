@@ -19,4 +19,9 @@ public class LibFuzzerTest1 {
             }
         }
     }
+    // public static void main(String[] args) {
+    //     // run FuzzOne 100 times.
+    //     for (int i = 0; i < 100000; i++)
+    //         FuzzOne("fuza");
+    // }
 }

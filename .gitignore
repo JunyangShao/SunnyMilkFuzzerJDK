@@ -10,5 +10,6 @@
 crash-*
 oom-*
 slow-*
+hs_*
 
 LibFuzzerLauncher

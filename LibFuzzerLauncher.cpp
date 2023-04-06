@@ -44,10 +44,14 @@ int main(int argc, char *argv[]) {
 
     JavaVM *jvm;
     JavaVMInitArgs vm_args;
-    JavaVMOption options[2];
+    JavaVMOption options[5];
 
     options[0].optionString = "-Djava.class.path=./:./fastjson-1.2.75.jar"; // Set classpath here
-    options[1].optionString = "-Xint";
+    options[1].optionString = "-XX:TieredStopAtLevel=1";
+    // options[2].optionString = "-XX:+UnlockDiagnosticVMOptions";
+    // options[3].optionString = "-XX:+PrintAssembly";
+    // options[4].optionString = "-XX:+PrintCompilation";
+    // options[1].optionString = "-Xint";
     vm_args.version = JNI_VERSION_1_6;
     vm_args.options = options;
     vm_args.nOptions = 2;
@@ -88,6 +92,6 @@ int main(int argc, char *argv[]) {
     int ret = fuzzer::FuzzerDriver(&argc, &argv, LLVMFuzzerTestOneInput);
     
     jvm->DestroyJavaVM();
-    
-    return ret;
+
+    return 0;
 }

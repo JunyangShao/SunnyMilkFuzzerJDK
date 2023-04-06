@@ -62,7 +62,6 @@ public class LibFuzzerTest3 {
     cnt++;
     if (cnt == 1000000) {
 	    System.out.println(time_elapsed);
-      System.out.println(getVersion());
       System.err.println("Fuzzed!");
       System.exit(1);
     }
