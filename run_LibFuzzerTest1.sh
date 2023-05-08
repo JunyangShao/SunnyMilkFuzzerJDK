@@ -12,5 +12,6 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server
 mkdir fuzzerOut
 ./LibFuzzerLauncher fuzzerOut LibFuzzerTest1
 rm -r fuzzerOut
+./clean.sh
 
 # $JAVA_HOME/bin/java -XX:+UnlockDiagnosticVMOptions -XX:+PrintCompilation -XX:+PrintAssembly -XX:LogFile=log.txt -XX:TieredStopAtLevel=1 LibFuzzerTest1

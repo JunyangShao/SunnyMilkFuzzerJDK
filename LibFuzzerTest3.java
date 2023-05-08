@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSONException;
 public class LibFuzzerTest3 {
   private static int cnt = 0;
   private static long time_elapsed = 0;
+  private static long start = 0;
   // A long string to make sure the workload is not trivial.
   private static final String s =
   "\r\n{\r\n" +
@@ -46,6 +47,7 @@ public class LibFuzzerTest3 {
   public static void FuzzerInit() {
     // Optional initialization to be run before the first call to fuzzerTestOneInput.
     time_elapsed = 0;
+    start = System.nanoTime();
   }
 
   private static int getVersion() {
@@ -61,7 +63,9 @@ public class LibFuzzerTest3 {
   public static void FuzzOne(String input) {
     cnt++;
     if (cnt == 1000000) {
+      // time_elapsed += System.nanoTime() - start;
 	    System.out.println(time_elapsed);
+      // System.out.println(getVersion());
       System.err.println("Fuzzed!");
       System.exit(1);
     }

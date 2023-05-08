@@ -12,3 +12,4 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server
 mkdir fuzzerOut
 ./LibFuzzerLauncher fuzzerOut LibFuzzerTest2
 rm -r fuzzerOut
+./clean.sh

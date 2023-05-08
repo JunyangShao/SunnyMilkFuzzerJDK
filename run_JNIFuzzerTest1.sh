@@ -8,3 +8,4 @@ $JAVA_HOME/bin/javac -cp ".:fastjson-1.2.75.jar" -h . JNIFuzzerTest1.java
 gcc -fPIC -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -shared -o libSunnyMilkFuzzer.so SunnyMilkFuzzer.c
 
 $JAVA_HOME/bin/java -Djava.library.path=. -cp ".:fastjson-1.2.75.jar" JNIFuzzerTest1
+./clean.sh

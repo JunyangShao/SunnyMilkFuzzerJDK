@@ -8,3 +8,4 @@ $JAVA_HOME/bin/javac -h . JNIFuzzerTest2.java
 gcc -fPIC -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -shared -o libSunnyMilkFuzzer.so SunnyMilkFuzzer.c
 
 $JAVA_HOME/bin/java -Djava.library.path=. -Xint JNIFuzzerTest2
+./clean.sh

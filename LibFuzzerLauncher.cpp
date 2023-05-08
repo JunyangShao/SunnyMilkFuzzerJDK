@@ -33,6 +33,14 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     // Clean up the jchar array
     delete[] jcharData;
 
+    // Randomly set the coverage counters
+    // uint8_t* ctrs = env->GetSunnyMilkFuzzerCoverage();
+    // static int iii = 0;
+    // static int jjj = 0;
+    // if (iii++ < 100) {
+    //     ctrs[(jjj++) & 0xFFFF] = 1;
+    // }
+
     return 0; // Return a value to match the int return type
 }
 
@@ -48,6 +56,7 @@ int main(int argc, char *argv[]) {
 
     options[0].optionString = "-Djava.class.path=./:./fastjson-1.2.75.jar"; // Set classpath here
     options[1].optionString = "-XX:TieredStopAtLevel=1";
+    // options[2].optionString = "-XX:CICompilerCount=1";
     // options[2].optionString = "-XX:+UnlockDiagnosticVMOptions";
     // options[3].optionString = "-XX:+PrintAssembly";
     // options[4].optionString = "-XX:+PrintCompilation";
