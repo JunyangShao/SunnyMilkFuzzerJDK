@@ -13,3 +13,7 @@ slow-*
 hs_*
 
 LibFuzzerLauncher
+
+jazzer/scratch/
+
+dacapo-9.12-MR1-bach.jar

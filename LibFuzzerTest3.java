@@ -50,23 +50,22 @@ public class LibFuzzerTest3 {
     start = System.nanoTime();
   }
 
-  private static int getVersion() {
+  private static String getVersion() {
     String version = System.getProperty("java.version");
     if(version.startsWith("1.")) {
       version = version.substring(2, 3);
     } else {
       int dot = version.indexOf(".");
       if(dot != -1) { version = version.substring(0, dot); }
-    } return Integer.parseInt(version);
+    } return version;
   }
 
   public static void FuzzOne(String input) {
     cnt++;
-    if (cnt == 1000000) {
+    if (cnt == 10000) {
       // time_elapsed += System.nanoTime() - start;
 	    System.out.println(time_elapsed);
-      // System.out.println(getVersion());
-      System.err.println("Fuzzed!");
+      System.out.println(getVersion());
       System.exit(1);
     }
     try {
