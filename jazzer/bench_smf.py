@@ -57,7 +57,7 @@ if __name__ == "__main__":
     # Run the shell script and get its output, including stdout and stderr
     jazzer_cmd = "export JAVA_HOME=" + original_jdk_path + " && " + \
                  "$JAVA_HOME/bin/javac -cp jazzer_standalone.jar DacapoFuzzer.java && " + \
-                 "./jazzer --cp=./ --jvm_args=-XX:TieredStopAtLevel=1 --trace=none --target_class=DacapoFuzzer && " + \
+                 "./jazzer --cp=./ --trace=none --target_class=DacapoFuzzer && " + \
                  "./clean.sh"
     for i in range(3):
         result = subprocess.run(jazzer_cmd, capture_output=True, text=True, shell=True)
