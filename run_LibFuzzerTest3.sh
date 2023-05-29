@@ -5,11 +5,12 @@ export JAVA_HOME=./SunnyMilkJDK/build/linux-x86_64-server-release/jdk
 # Compilation for the command:
 $JAVA_HOME/bin/javac -cp ".:fastjson-1.2.75.jar" LibFuzzerTest3.java
 
-g++ -fPIC -pthread -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -I./fuzzer -L"${JAVA_HOME}/lib/server" -L./fuzzer -o LibFuzzerLauncher LibFuzzerLauncher.cpp -ljvm -lFuzzer -ldl
+g++ -g -O2 -fPIC -pthread -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -I./fuzzer -L"${JAVA_HOME}/lib/server" -L./fuzzer -o LibFuzzerLauncher LibFuzzerLauncher.cpp -ljvm -lFuzzer -ldl
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server
 
 mkdir fuzzerOut
-./LibFuzzerLauncher fuzzerOut LibFuzzerTest3
+perf record ./LibFuzzerLauncher fuzzerOut LibFuzzerTest3
+perf report
 rm -r fuzzerOut
 ./clean.sh

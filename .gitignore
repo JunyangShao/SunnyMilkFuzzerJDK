@@ -4,6 +4,8 @@
 
 *.so
 
+*.log
+
 .vscode/
 .metals/
 

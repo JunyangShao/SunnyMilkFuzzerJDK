@@ -62,9 +62,10 @@ public class LibFuzzerTest3 {
 
   public static void FuzzOne(String input) {
     cnt++;
-    if (cnt == 10000) {
+    if (cnt == 1000000) {
       // time_elapsed += System.nanoTime() - start;
-	    System.out.println(time_elapsed);
+      System.out.println(System.nanoTime() - start);
+      System.out.println(time_elapsed);
       System.out.println(getVersion());
       System.exit(1);
     }

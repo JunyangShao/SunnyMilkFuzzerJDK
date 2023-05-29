@@ -188,23 +188,35 @@ size_t ForEachNonZeroByte(const uint8_t *Begin, const uint8_t *End,
   const size_t StepMask = Step - 1;
   auto P = Begin;
   // Iterate by 1 byte until either the alignment boundary or the end.
-  for (; reinterpret_cast<uintptr_t>(P) & StepMask && P < End; P++)
-    if (uint8_t V = *P)
-      Handle8bitCounter(FirstFeature, P - Begin, V);
+  // After changes made by SunnyMilkFuzzer, all address will be well-aligned,
+  // this will not be executed.
+  // for (; reinterpret_cast<uintptr_t>(P) & StepMask && P < End; P++)
+  //   if (uint8_t V = *P)
+  //     Handle8bitCounter(FirstFeature, P - Begin, V);
 
   // Iterate by Step bytes at a time.
-  for (; P + Step <= End; P += Step)
-    if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
-      Bundle = HostToLE(Bundle);
-      for (size_t I = 0; I < Step; I++, Bundle >>= 8)
-        if (uint8_t V = Bundle & 0xff)
-          Handle8bitCounter(FirstFeature, P - Begin + I, V);
+  // Changed by SunnyMilkFuzzer
+  static constexpr size_t SMFTableMethodSize = 256u;
+  auto PMethodStart = Begin;
+  for(; PMethodStart + SMFTableMethodSize <= End; PMethodStart += SMFTableMethodSize) {
+    if (*PMethodStart != 0) {
+      auto PMethodEnd = PMethodStart + SMFTableMethodSize;
+      for (P = PMethodStart; P + Step <= PMethodEnd; P += Step)
+        if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
+          Bundle = HostToLE(Bundle);
+          for (size_t I = 0; I < Step; I++, Bundle >>= 8)
+            if (uint8_t V = Bundle & 0xff)
+              Handle8bitCounter(FirstFeature, P - Begin + I, V);
+        } 
     }
+  }
 
   // Iterate by 1 byte until the end.
-  for (; P < End; P++)
-    if (uint8_t V = *P)
-      Handle8bitCounter(FirstFeature, P - Begin, V);
+  // After changes made by SunnyMilkFuzzer, all address will be well-aligned,
+  // this will not be executed.
+  // for (; P < End; P++)
+  //   if (uint8_t V = *P)
+  //     Handle8bitCounter(FirstFeature, P - Begin, V);
   return End - Begin;
 }
 

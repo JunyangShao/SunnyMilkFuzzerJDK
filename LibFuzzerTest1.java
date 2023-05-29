@@ -8,8 +8,20 @@ public class LibFuzzerTest1 {
                             if (s.charAt(2) == 'z') {
                                 if (s.length() > 3) {
                                     if (s.charAt(3) == 'z') {
-                                        System.err.println("Fuzzed!");
-                                        System.exit(1);
+                                        if (s.length() > 4) {
+                                            if (s.charAt(4) == ' ') {
+                                                if (s.length() > 5) {
+                                                    if (s.charAt(5) == 'm') {
+                                                        if (s.length() > 10) {
+                                                            if (s.charAt(6) == 'e') {
+                                                                System.err.println("fuzz me!");
+                                                                System.exit(1);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }

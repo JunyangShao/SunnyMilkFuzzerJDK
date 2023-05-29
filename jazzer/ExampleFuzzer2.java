@@ -65,6 +65,7 @@ public class ExampleFuzzer2 {
     cnt++;
     if (cnt == 1000000) {
       	    // time_elapsed += System.nanoTime() - start;
+	    System.out.println(System.nanoTime() - start);
 	    System.out.println(time_elapsed);
       	    System.out.println(getVersion());
 	    throw new FuzzerSecurityIssueMedium("mustNeverBeCalled has been called");
