@@ -55,10 +55,11 @@ int main(int argc, char *argv[]) {
     JavaVMOption options[5];
 
     options[0].optionString = "-Djava.class.path=./:./fastjson-1.2.75.jar"; // Set classpath here
-    options[1].optionString = "-XX:TieredStopAtLevel=1";
-    options[2].optionString = "-XX:+UseParallelGC";
-    options[3].optionString = "-XX:+CriticalJNINatives";
-    options[4].optionString = "-Xmx1800m";
+    // options[1].optionString = "-XX:TieredStopAtLevel=1";
+    options[1].optionString = "-XX:+UseParallelGC";
+    options[2].optionString = "-XX:+CriticalJNINatives";
+    options[3].optionString = "-Xmx1800m";
+    
     // options[2].optionString = "-XX:CICompilerCount=1";
     // options[2].optionString = "-XX:+UnlockDiagnosticVMOptions";
     // options[3].optionString = "-XX:+PrintAssembly";
@@ -66,7 +67,7 @@ int main(int argc, char *argv[]) {
     // options[1].optionString = "-Xint";
     vm_args.version = JNI_VERSION_1_8;
     vm_args.options = options;
-    vm_args.nOptions = 5;
+    vm_args.nOptions = 4;
     vm_args.ignoreUnrecognized = JNI_FALSE;
 
     jint res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
