@@ -38,6 +38,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     // static int iii = 0;
     // static int jjj = 0;
     // if (iii++ < 100) {
+    //     ctrs[0] = 1;
     //     ctrs[(jjj++) & 0xFFFF] = 1;
     // }
 
