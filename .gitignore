@@ -19,3 +19,6 @@ LibFuzzerLauncher
 jazzer/scratch/
 
 dacapo-9.12-MR1-bach.jar
+
+out_smf
+out_jazzer

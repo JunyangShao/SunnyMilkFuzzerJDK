@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
     JavaVMInitArgs vm_args;
     JavaVMOption options[5];
 
-    options[0].optionString = "-Djava.class.path=./:./fastjson-1.2.75.jar"; // Set classpath here
+    options[0].optionString = "-Djava.class.path=./:./gson.jar"; // Set classpath here
     // options[1].optionString = "-XX:TieredStopAtLevel=1";
     options[1].optionString = "-XX:+UseParallelGC";
     options[2].optionString = "-XX:+CriticalJNINatives";
