@@ -1,3 +1,6 @@
 [submodule "SunnyMilkJDK"]
 	path = SunnyMilkJDK
 	url = https://github.com/JunyangShao/SunnyMilkJDK
+[submodule "benchmark/oss-fuzz"]
+	path = benchmark/oss-fuzz
+	url = https://github.com/google/oss-fuzz
