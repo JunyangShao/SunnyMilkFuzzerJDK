@@ -48,19 +48,28 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 
 int main(int argc, char *argv[]) {
     if (argc < 3) {
-        fprintf(stderr, "Usage: %s [libFuzzerArguments]* <JavaClassName>\n", argv[0]);
+        fprintf(stderr, "Usage: %s [libFuzzerArguments]* <JavaClassName> ---p=[JarPath]\n", argv[0]);
         return 1;
     }
 
     JavaVM *jvm;
     JavaVMInitArgs vm_args;
     JavaVMOption options[5];
+    char class_path[1024] = "-Djava.class.path=./:";
+    int last_arg_len = strlen(argv[argc - 1]);
+    int smf_arg_cnt = 1;
+    if (last_arg_len > 5 && strncmp(argv[argc - 1], "---p=", 5) == 0) {
+        int orig_len = strlen(class_path);
+        strncpy(class_path + orig_len, argv[argc - 1] + 5, last_arg_len - 5);
+        class_path[orig_len + last_arg_len - 5] = '\0';
+        smf_arg_cnt = 2;
+    }
 
-    options[0].optionString = "-Djava.class.path=./:./gson.jar"; // Set classpath here
-    // options[1].optionString = "-XX:TieredStopAtLevel=1";
-    options[1].optionString = "-XX:+UseParallelGC";
-    options[2].optionString = "-XX:+CriticalJNINatives";
-    options[3].optionString = "-Xmx1800m";
+    options[0].optionString = class_path;
+    options[1].optionString = "-XX:TieredStopAtLevel=3";
+    options[2].optionString = "-XX:+UseParallelGC";
+    options[3].optionString = "-XX:+CriticalJNINatives";
+    options[4].optionString = "-Xmx1800m";
     
     // options[2].optionString = "-XX:CICompilerCount=1";
     // options[2].optionString = "-XX:+UnlockDiagnosticVMOptions";
@@ -69,7 +78,7 @@ int main(int argc, char *argv[]) {
     // options[1].optionString = "-Xint";
     vm_args.version = JNI_VERSION_1_8;
     vm_args.options = options;
-    vm_args.nOptions = 4;
+    vm_args.nOptions = 5;
     vm_args.ignoreUnrecognized = JNI_FALSE;
 
     jint res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
@@ -107,7 +116,7 @@ int main(int argc, char *argv[]) {
     }
     env->ExceptionClear();
 
-    --argc;
+    argc -= smf_arg_cnt;
     int ret = fuzzer::FuzzerDriver(&argc, &argv, LLVMFuzzerTestOneInput);
     
     jvm->DestroyJavaVM();
