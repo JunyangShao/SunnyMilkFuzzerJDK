@@ -32,7 +32,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 
     // Clean up the jchar array
     delete[] jcharData;
-
+    env->DeleteLocalRef(input_str);
+    
     // Randomly set the coverage counters
     // uint8_t* ctrs = env->GetSunnyMilkFuzzerCoverage();
     // static int iii = 0;
