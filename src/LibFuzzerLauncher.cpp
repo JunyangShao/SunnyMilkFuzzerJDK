@@ -66,10 +66,10 @@ int main(int argc, char *argv[]) {
     }
 
     options[0].optionString = class_path;
-    options[1].optionString = "-XX:TieredStopAtLevel=3";
-    options[2].optionString = "-XX:+UseParallelGC";
-    options[3].optionString = "-XX:+CriticalJNINatives";
-    options[4].optionString = "-Xmx1800m";
+    // options[1].optionString = "-XX:TieredStopAtLevel=3";
+    options[1].optionString = "-XX:+UseParallelGC";
+    options[2].optionString = "-XX:+CriticalJNINatives";
+    options[3].optionString = "-Xmx1800m";
     
     // options[2].optionString = "-XX:CICompilerCount=1";
     // options[2].optionString = "-XX:+UnlockDiagnosticVMOptions";
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
     // options[1].optionString = "-Xint";
     vm_args.version = JNI_VERSION_1_8;
     vm_args.options = options;
-    vm_args.nOptions = 5;
+    vm_args.nOptions = 4;
     vm_args.ignoreUnrecognized = JNI_FALSE;
 
     jint res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
