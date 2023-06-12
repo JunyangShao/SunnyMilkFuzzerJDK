@@ -23,7 +23,6 @@ for dir_name in os.listdir('./extracted'):
 
     # Check if it is a directory
     if os.path.isdir(dir_path):
-
         # Remove the ./extracted/x/open-jdk-17 directory if it exists
         folder_path = os.path.join(dir_path, 'open-jdk-17')
         if os.path.exists(folder_path):

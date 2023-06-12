@@ -23,7 +23,7 @@ subprocess.run(["docker", "wait", container], check=True)
 
 # Get the output directory from the Docker container
 os.makedirs(f'../../../extracted/{dir_name}', exist_ok=True)
-subprocess.run(["docker", "cp", f"{container}:/out", f'../../../extracted/{dir_name}'], check=True)
+subprocess.run(["docker", "cp", f"{container}:/out/", f'../../../extracted/{dir_name}'], check=True)
 
 # Remove Docker container and image
 subprocess.run(["docker", "rm", "-f", container], check=True)
