@@ -1,6 +1,8 @@
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 
@@ -42,14 +44,15 @@ public class FuzzerFinder {
 
     public static void createCopies(File file, CompilationUnit cu, MethodDeclaration method) {
         try {
-            String path = file.getAbsolutePath().replace("../oss-fuzz/projects/", "../extracted2/");
+            String path = file.getAbsolutePath().replace("../oss-fuzz/projects/", "../extracted/");
             Path directoryPath = Paths.get(path).getParent();
             Files.createDirectories(directoryPath);
-
+    
             cu.getClassByName(file.getName().replace(".java", "")).ifPresent(c -> c.setName(file.getName().replace(".java", "Jazzer")));
             Files.writeString(Paths.get(path.replace(".java", "Jazzer.java")), cu.toString());
-
+    
             cu = StaticJavaParser.parse(file);
+            cu.getImports().removeIf(id -> id.getNameAsString().equals("com.code_intelligence.jazzer.api.FuzzedDataProvider"));
             cu.getClassByName(file.getName().replace(".java", "")).ifPresent(c -> c.setName(file.getName().replace(".java", "SMF")));
             cu.findAll(MethodDeclaration.class).stream()
                 .filter(m -> m.getDeclarationAsString(false, false, false).startsWith("void fuzzerTestOneInput(FuzzedDataProvider"))
@@ -59,8 +62,40 @@ public class FuzzerFinder {
                     m.getBody().ifPresent(b -> b.findAll(MethodCallExpr.class, mc -> mc.getNameAsString().equals("consumeRemainingAsString")).forEach(mc -> mc.replace(new NameExpr("SMFData"))));
                 });
             Files.writeString(Paths.get(path.replace(".java", "SMF.java")), cu.toString());
+    
+            cu.getClassByName(file.getName().replace(".java", "SMF")).ifPresent(c -> c.setName(file.getName().replace(".java", "Main")));
+            
+            cu.addImport("java.nio.file.Files");
+            cu.addImport("java.nio.file.Paths");
+            TypeDeclaration<?> typeDeclaration = cu.getType(0);
+            String mainMethodCode =
+                "public static void main(String[] args) {" +
+                "File folder = new File(\"./fuzzerOut\");" +
+                "File[] listOfFiles = folder.listFiles();" +
+                "if (listOfFiles != null) {" +
+                "for (File file : listOfFiles) {" +
+                "if (file.isFile()) {" +
+                "String content = readFileAsString(file.getAbsolutePath());" +
+                "FuzzOne(content);" +
+                "}" +
+                "}" +
+                "} else {" +
+                "System.out.println(\"The directory is empty or it does not exist.\");" +
+                "}" +
+                "}";
+            String readFileAsStringCode = "private static String readFileAsString(String fileName) {" +
+                "try {" +
+                "String content = new String(Files.readAllBytes(Paths.get(fileName)));" +
+                "return content;" +
+                "} catch (IOException e) {" +
+                "return \"\";" +
+                "}" +
+                "}";
+            typeDeclaration.addMember(StaticJavaParser.parseBodyDeclaration(mainMethodCode));
+            typeDeclaration.addMember(StaticJavaParser.parseBodyDeclaration(readFileAsStringCode));
+            Files.writeString(Paths.get(path.replace(".java", "Main.java")), cu.toString());
         } catch (IOException e) {
             System.out.println("Error creating copies: " + file.getAbsolutePath());
         }
-    }
+    }    
 }

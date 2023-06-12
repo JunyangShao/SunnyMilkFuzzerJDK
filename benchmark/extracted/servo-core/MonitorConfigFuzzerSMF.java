@@ -1,0 +1,23 @@
+import com.netflix.servo.monitor.*;
+import com.netflix.servo.tag.BasicTagList;
+import com.netflix.servo.tag.SortedTagList;
+import com.netflix.servo.tag.TagList;
+
+public class MonitorConfigFuzzerSMF {
+
+    public static void FuzzOne(String SMFData) {
+        String key = data.consumeString(500);
+        String value = data.consumeString(500);
+        String name = SMFData;
+        if (key.isEmpty() || value.isEmpty()) {
+            return;
+        }
+        TagList tags1 = new BasicTagList(SortedTagList.builder().withTag(key, value).build());
+        MonitorConfig m = new MonitorConfig.Builder(name).withTags(tags1).build();
+        m.getName();
+        m.getTags();
+        m.hashCode();
+        m.getPublishingPolicy();
+        new BasicCounter(m);
+    }
+}

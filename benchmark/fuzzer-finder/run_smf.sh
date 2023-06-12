@@ -28,6 +28,6 @@ if [[ $# -eq 4 ]]; then
 else
 	./LibFuzzerLauncher fuzzerOut $2 "---p=$3" > smf-report/smf-out 2>&1
 fi
-sh ../../jacoco_report.sh smf-report
+sh ../../fuzzer-finder/jacoco_report.sh smf-report
 rm -r fuzzerOut
 $JAZZER_DIR/clean.sh

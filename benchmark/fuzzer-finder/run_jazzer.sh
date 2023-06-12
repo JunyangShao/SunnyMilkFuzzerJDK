@@ -17,5 +17,5 @@ if [[ $# -eq 4 ]]; then
 else
 	$JAZZER_DIR/jazzer fuzzerOut --cp=$3:./ --trace=none --target_class=$2 > jazzer-report/jazzer-out 2>&1
 fi
-sh ../../jacoco_report.sh jazzer-report
+sh ../../fuzzer-finder/jacoco_report.sh jazzer-report
 $JAZZER_DIR/clean.sh
