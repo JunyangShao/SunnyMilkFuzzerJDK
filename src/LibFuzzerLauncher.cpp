@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
     }
     // Create a jstring object for the input string "Hello World"
 
-    jmethodID fuzzer_init_method = env->GetStaticMethodID(cls, "FuzzerInit", "()V");
+    jmethodID fuzzer_init_method = env->GetStaticMethodID(cls, "fuzzerInitialize", "()V");
     if (fuzzer_init_method != NULL) {
         env->CallStaticVoidMethod(cls, fuzzer_init_method);
     }

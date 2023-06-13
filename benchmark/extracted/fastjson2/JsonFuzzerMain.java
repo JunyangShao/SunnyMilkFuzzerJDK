@@ -2,6 +2,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class JsonFuzzerMain {
 

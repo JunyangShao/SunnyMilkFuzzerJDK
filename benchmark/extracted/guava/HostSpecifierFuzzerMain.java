@@ -3,6 +3,7 @@ import com.google.common.net.HostSpecifier;
 import java.text.ParseException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class HostSpecifierFuzzerMain {
 

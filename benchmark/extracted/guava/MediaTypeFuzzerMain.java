@@ -3,6 +3,7 @@ import com.google.common.net.MediaType;
 import java.lang.IllegalArgumentException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class MediaTypeFuzzerMain {
 

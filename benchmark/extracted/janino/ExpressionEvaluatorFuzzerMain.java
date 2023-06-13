@@ -7,6 +7,7 @@ import org.codehaus.janino.Scanner;
 import org.codehaus.janino.ScriptEvaluator;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class ExpressionEvaluatorFuzzerMain {
 

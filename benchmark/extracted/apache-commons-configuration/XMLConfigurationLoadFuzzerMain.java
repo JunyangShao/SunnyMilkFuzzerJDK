@@ -6,6 +6,7 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.io.FileHandler;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class XMLConfigurationLoadFuzzerMain {
 

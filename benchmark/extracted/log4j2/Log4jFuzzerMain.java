@@ -16,6 +16,7 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.apache.logging.log4j.status.StatusLogger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class Log4jFuzzerMain {
 

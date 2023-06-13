@@ -1,6 +1,7 @@
 import com.google.json.JsonSanitizer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class IdempotenceFuzzerMain {
 

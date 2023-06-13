@@ -5,6 +5,8 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
+import java.util.List;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,11 +32,27 @@ public class FuzzerFinder {
         try {
             CompilationUnit cu = StaticJavaParser.parse(file);
             cu.findAll(MethodDeclaration.class).stream()
-                    .filter(m -> m.getDeclarationAsString(false, false, false).startsWith("void fuzzerTestOneInput(FuzzedDataProvider"))
+                    .filter(m -> m.getDeclarationAsString(false, false, false)
+                            .startsWith("void fuzzerTestOneInput(FuzzedDataProvider"))
                     .forEach(m -> {
-                        long count = m.findAll(MethodCallExpr.class, mc -> mc.getNameAsString().equals("consumeRemainingAsString")).size();
-                        if (count == 1) {
-                            createCopies(file, cu.clone(), m.clone());
+                        if (m.getParameters().size() == 1) {
+                            // Get the name of the parameter
+                            String paramName = m.getParameter(0).getNameAsString();
+    
+                            // Find all MethodCallExpr nodes that reference the parameter
+                            List<MethodCallExpr> paramReferences = m.findAll(MethodCallExpr.class, mc -> 
+                                mc.getScope().isPresent() &&
+                                mc.getScope().get() instanceof NameExpr &&
+                                ((NameExpr) mc.getScope().get()).getNameAsString().equals(paramName)
+                            );
+    
+                            // Check if there is exactly one reference and if it's "<param>.consumeRemainingAsString()"
+                            if (paramReferences.size() == 1) {
+                                MethodCallExpr callExpr = paramReferences.get(0);
+                                if (callExpr.getNameAsString().equals("consumeRemainingAsString")) {
+                                    createCopies(file, cu.clone(), m.clone());
+                                }
+                            }
                         }
                     });
         } catch (Exception e) {
@@ -67,6 +85,7 @@ public class FuzzerFinder {
             
             cu.addImport("java.nio.file.Files");
             cu.addImport("java.nio.file.Paths");
+            cu.addImport("java.io.*");
             TypeDeclaration<?> typeDeclaration = cu.getType(0);
             String mainMethodCode =
                 "public static void main(String[] args) {" +

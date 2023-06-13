@@ -2,6 +2,7 @@ import jakarta.mail.internet.HeaderTokenizer;
 import jakarta.mail.internet.ParseException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class HeaderTokenizerFuzzerMain {
 

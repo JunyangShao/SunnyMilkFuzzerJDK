@@ -4,6 +4,7 @@ import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.SpelParseException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class ParameterBindingJsonReaderFuzzerMain {
 

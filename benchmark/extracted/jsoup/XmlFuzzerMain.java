@@ -2,6 +2,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class XmlFuzzerMain {
 

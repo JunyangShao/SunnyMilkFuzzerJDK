@@ -2,6 +2,7 @@ import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class JSONParserFuzzerMain {
 

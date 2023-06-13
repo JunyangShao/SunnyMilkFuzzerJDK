@@ -2,6 +2,7 @@ import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.boot.json.JsonParseException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class BasicJsonParserFuzzerMain {
 

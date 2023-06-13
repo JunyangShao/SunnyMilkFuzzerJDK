@@ -2,6 +2,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.json.JSONException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class JsonFuzzerMain {
 

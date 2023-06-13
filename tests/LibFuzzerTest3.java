@@ -44,7 +44,7 @@ public class LibFuzzerTest3 {
   "        }\r\n" +
   "    }\r\n" +
   "}";
-  public static void FuzzerInit() {
+  public static void fuzzerInitialize() {
     // Optional initialization to be run before the first call to fuzzerTestOneInput.
     time_elapsed = 0;
     start = System.nanoTime();

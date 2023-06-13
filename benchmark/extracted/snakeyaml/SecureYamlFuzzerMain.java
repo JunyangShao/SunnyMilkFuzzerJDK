@@ -4,6 +4,7 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.YAMLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.*;
 
 public class SecureYamlFuzzerMain {
 
