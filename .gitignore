@@ -24,8 +24,8 @@ out_smf
 out_jazzer
 fuzzerOut
 
-*JazzerReport/
-*SMFReport/
+*JazzerReport*/
+*SMFReport*/
 *Report.csv
 
 misc/
