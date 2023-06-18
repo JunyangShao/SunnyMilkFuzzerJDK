@@ -16,19 +16,20 @@ def parse_file(file_path):
     return 0
 
 # image names
-image_names = [
-    "janino", "jersey", "json-java",
-    "jsoup", "mysql-connector-j", "slf4j-api", "spring-cloud-sleuth-brave",
-    "fastjson2", "guice", "java-example", "jettison", "json-sanitizer",
-    "jul-to-slf4j", "osgi", "snakeyaml", "spring-data-mongodb",
-    "gson", "jakarta-mail-api", "javaparser", "joda-time", "json-smart-v2",
-    "log4j2", "retrofit", "spring-boot", "stringtemplate4"
-]
-
+# image_names = [
+#     "janino", "jersey", "json-java",
+#     "jsoup", "mysql-connector-j", "slf4j-api", "spring-cloud-sleuth-brave",
+#     "fastjson2", "guice", "java-example", "jettison", "json-sanitizer",
+#     "jul-to-slf4j", "osgi", "snakeyaml", "spring-data-mongodb",
+#     "gson", "jakarta-mail-api", "javaparser", "joda-time", "json-smart-v2",
+#     "log4j2", "retrofit", "spring-boot", "stringtemplate4"
+# ]
+image_names = ["json-java"]
 image_names_excluded = ["jersey","mysql-connector-j", "guice", "self4j-api",
                         "spring-cloud-sleuth-brave", "java-example", "json-sanitizer",
                         "osgi", "snakeyaml", "spring-data-mongodb", "log4j2",
-                        "retrofit", "spring-boot", "slf4j-api"]
+                        "retrofit", "spring-boot", "slf4j-api", "fastjson2", "jul-to-slf4j",
+                        "janino"]
 
 mode = "print"
 running_time = 10

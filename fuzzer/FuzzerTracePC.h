@@ -196,20 +196,28 @@ size_t ForEachNonZeroByte(const uint8_t *Begin, const uint8_t *End,
 
   // Iterate by Step bytes at a time.
   // Changed by SunnyMilkFuzzer
-  static constexpr size_t SMFTableMethodSize = 256u;
-  auto PMethodStart = Begin;
-  for(; PMethodStart + SMFTableMethodSize <= End; PMethodStart += SMFTableMethodSize) {
-    if (*PMethodStart != 0) {
-      auto PMethodEnd = PMethodStart + SMFTableMethodSize;
-      for (P = PMethodStart; P + Step <= PMethodEnd; P += Step)
-        if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
-          Bundle = HostToLE(Bundle);
-          for (size_t I = 0; I < Step; I++, Bundle >>= 8)
-            if (uint8_t V = Bundle & 0xff)
-              Handle8bitCounter(FirstFeature, P - Begin + I, V);
-        } 
+  // static constexpr size_t SMFTableMethodSize = 256u;
+  // auto PMethodStart = Begin;
+  // for(; PMethodStart + SMFTableMethodSize <= End; PMethodStart += SMFTableMethodSize) {
+  //   if (*PMethodStart != 0) {
+  //     auto PMethodEnd = PMethodStart + SMFTableMethodSize;
+  //     for (P = PMethodStart; P + Step <= PMethodEnd; P += Step)
+  //       if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
+  //         Bundle = HostToLE(Bundle);
+  //         for (size_t I = 0; I < Step; I++, Bundle >>= 8)
+  //           if (uint8_t V = Bundle & 0xff)
+  //             Handle8bitCounter(FirstFeature, P - Begin + I, V);
+  //       } 
+  //   }
+  // }
+
+  for (; P + Step <= End; P += Step)
+    if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
+      Bundle = HostToLE(Bundle);
+      for (size_t I = 0; I < Step; I++, Bundle >>= 8)
+        if (uint8_t V = Bundle & 0xff)
+          Handle8bitCounter(FirstFeature, P - Begin + I, V);
     }
-  }
 
   // Iterate by 1 byte until the end.
   // After changes made by SunnyMilkFuzzer, all address will be well-aligned,

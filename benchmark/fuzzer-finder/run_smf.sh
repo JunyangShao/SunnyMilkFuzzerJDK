@@ -20,6 +20,7 @@ g++ -Wno-write-strings -g -O2 -fPIC -pthread -I"$JAVA_HOME/include" -I"$JAVA_HOM
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server
 
+rm -r fuzzerOut
 mkdir fuzzerOut
 rm -r $4
 mkdir $4
@@ -29,5 +30,5 @@ else
 	./LibFuzzerLauncher fuzzerOut $2SMF "---p=$3" > $4/smf-out 2>&1
 fi
 sh ../../fuzzer-finder/jacoco_report.sh $2Main $3 $4
-rm -r fuzzerOut
+mv fuzzerOut $4
 $JAZZER_DIR/clean.sh

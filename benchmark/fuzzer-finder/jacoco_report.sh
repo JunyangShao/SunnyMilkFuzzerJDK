@@ -12,4 +12,3 @@ $JAVA_HOME/bin/javac -cp $2 $1.java
 $JAVA_HOME/bin/java -javaagent:$JAZZER_DIR/jacoco/lib/jacocoagent.jar=destfile=jacoco.exec -cp .:$2 $1 hello
 
 $JAVA_HOME/bin/java -jar $JAZZER_DIR/jacoco/lib/jacococli.jar report jacoco.exec --classfiles . --sourcefiles . --html $3
-$JAVA_HOME/bin/java -jar $JAZZER_DIR/jacoco/lib/jacococli.jar report jacoco.exec --classfiles . --csv $3.csv

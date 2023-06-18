@@ -9,6 +9,7 @@ export JAVA_HOME=/home/junyangshao/Desktop/playground/jdk/build/linux-x86_64-ser
 cd $1
 
 $JAVA_HOME/bin/javac -cp $JAZZER_DIR/jazzer_standalone.jar:$3 $2Jazzer.java
+rm -r fuzzerOut
 mkdir fuzzerOut
 rm -r $4
 mkdir $4
@@ -18,4 +19,5 @@ else
 	$JAZZER_DIR/jazzer fuzzerOut --cp=$3:./ --trace=none --target_class=$2Jazzer > $4/jazzer-out 2>&1
 fi
 sh ../../fuzzer-finder/jacoco_report.sh $2Main $3 $4
+mv fuzzerOut $4
 $JAZZER_DIR/clean.sh

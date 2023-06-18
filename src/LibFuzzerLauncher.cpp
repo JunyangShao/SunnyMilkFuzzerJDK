@@ -10,14 +10,21 @@ jclass cls;
 jmethodID fuzz_one_method;
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
-    // Convert the uint8_t array to a jchar array
-    jchar *jcharData = new jchar[Size];
-    for (size_t i = 0; i < Size; ++i) {
-        jcharData[i] = static_cast<jchar>(Data[i]);
-    }
+    // // Convert the uint8_t array to a jchar array
+    // jchar *jcharData = new jchar[Size];
+    // for (size_t i = 0; i < Size; ++i) {
+    //     jcharData[i] = static_cast<jchar>(Data[i]);
+    // }
 
-    // Create a jstring from the jchar array and the given size
-    jstring input_str = env->NewString(jcharData, Size);
+    // // Create a jstring from the jchar array and the given size
+    // jstring input_str = env->NewString(jcharData, Size);
+
+    char *jcharData = new char[Size + 1];
+    memcpy(jcharData, Data, Size);
+    jcharData[Size] = '\0';
+
+    // Create a jstring from the C string
+    jstring input_str = env->NewStringUTF(jcharData);
 
     // Call the Java method with the created jstring
     env->SetSMFBegin();
@@ -66,10 +73,10 @@ int main(int argc, char *argv[]) {
     }
 
     options[0].optionString = class_path;
-    // options[1].optionString = "-XX:TieredStopAtLevel=3";
-    options[1].optionString = "-XX:+UseParallelGC";
-    options[2].optionString = "-XX:+CriticalJNINatives";
-    options[3].optionString = "-Xmx1800m";
+    options[1].optionString = "-XX:TieredStopAtLevel=1";
+    options[2].optionString = "-XX:+UseParallelGC";
+    options[3].optionString = "-XX:+CriticalJNINatives";
+    options[4].optionString = "-Xmx1800m";
     
     // options[2].optionString = "-XX:CICompilerCount=1";
     // options[2].optionString = "-XX:+UnlockDiagnosticVMOptions";
@@ -78,7 +85,7 @@ int main(int argc, char *argv[]) {
     // options[1].optionString = "-Xint";
     vm_args.version = JNI_VERSION_1_8;
     vm_args.options = options;
-    vm_args.nOptions = 4;
+    vm_args.nOptions = 5;
     vm_args.ignoreUnrecognized = JNI_FALSE;
 
     jint res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
