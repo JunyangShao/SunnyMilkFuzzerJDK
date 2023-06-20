@@ -23,6 +23,7 @@
 #include "FuzzerUtil.h"
 #include "FuzzerValueBitMap.h"
 #include <set>
+#include <atomic>
 
 // Used by -fsanitize-coverage=stack-depth to track stack depth
 ATTRIBUTES_INTERFACE_TLS_INITIAL_EXEC uintptr_t __sancov_lowest_stack;
@@ -37,13 +38,14 @@ size_t TracePC::GetTotalPCCoverage() {
 
 
 void TracePC::HandleInline8bitCountersInit(uint8_t *Start, uint8_t *Stop) {
+  std::atomic_thread_fence(std::memory_order_release);
   if (Start == Stop) return;
   if (NumModules &&
       Modules[NumModules - 1].Start() == Start)
     return;
   assert(NumModules <
          sizeof(Modules) / sizeof(Modules[0]));
-  auto &M = Modules[NumModules++];
+  auto &M = Modules[NumModules];
   uint8_t *AlignedStart = RoundUpByPage(Start);
   uint8_t *AlignedStop  = RoundDownByPage(Stop);
   size_t NumFullPages = AlignedStop > AlignedStart ?
@@ -65,7 +67,17 @@ void TracePC::HandleInline8bitCountersInit(uint8_t *Start, uint8_t *Stop) {
   assert(M.Size() == (size_t)(Stop - Start));
   assert(M.Stop() == Stop);
   assert(M.Start() == Start);
+  ++NumModules;
   NumInline8bitCounters += M.Size();
+  std::atomic_thread_fence(std::memory_order_acquire);
+}
+
+void TracePC::HandleMethodTablesInit(int* SizeTable, uint8_t *HitTable, size_t MethodNum) {
+  std::atomic_thread_fence(std::memory_order_release);
+  MethodHitTable = HitTable;
+  MethodSizeTable = SizeTable;
+  kMethodNum = MethodNum;
+  std::atomic_thread_fence(std::memory_order_acquire);
 }
 
 void TracePC::HandlePCsInit(const uintptr_t *Start, const uintptr_t *Stop) {

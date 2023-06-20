@@ -70,6 +70,9 @@ struct MemMemTable {
 class TracePC {
  public:
   void HandleInline8bitCountersInit(uint8_t *Start, uint8_t *Stop);
+  // For SunnyMilkFuzzer
+  void HandleMethodTablesInit(int* SizeTable, uint8_t *HitTable, size_t MethodNum);
+  void HandleInline8bitCountersMethodTableInit(uint8_t *Start, uint8_t *Stop);
   void HandlePCsInit(const uintptr_t *Start, const uintptr_t *Stop);
   void HandleCallerCallee(uintptr_t Caller, uintptr_t Callee);
   template <class T> void HandleCmp(uintptr_t PC, T Arg1, T Arg2);
@@ -85,6 +88,7 @@ class TracePC {
     ValueProfileMap.Reset();
     ClearExtraCounters();
     ClearInlineCounters();
+    memset(MethodHitTable, 0, kMethodNum);
   }
 
   void ClearInlineCounters();
@@ -158,6 +162,11 @@ private:
   size_t NumModules;  // linker-initialized.
   size_t NumInline8bitCounters;
 
+  // Used by SunnyMilkFuzzer
+  size_t kMethodNum;
+  int *MethodSizeTable;
+  uint8_t *MethodHitTable;
+
   template <class Callback>
   void IterateCounterRegions(Callback CB) {
     for (size_t m = 0; m < NumModules; m++)
@@ -182,11 +191,22 @@ template <class Callback>
 // void Callback(size_t FirstFeature, size_t Idx, uint8_t Value);
 ATTRIBUTE_NO_SANITIZE_ALL
 size_t ForEachNonZeroByte(const uint8_t *Begin, const uint8_t *End,
+                        int &CurMethodIdx,
+                        uint8_t *&CurMethodStart,
+                        uint8_t *&CurMethodEnd,
+                        uint8_t &CurMethodHit,
+                        size_t kMethodNum,
+                        int *MethodSizeTable,
+                        uint8_t *MethodHitTable,
                         size_t FirstFeature, Callback Handle8bitCounter) {
+  if (CurMethodIdx >= kMethodNum) {
+    // No more methods, no need to scan the rest.
+    return End - Begin;
+  }
   typedef uintptr_t LargeType;
   const size_t Step = sizeof(LargeType) / sizeof(uint8_t);
   const size_t StepMask = Step - 1;
-  auto P = Begin;
+
   // Iterate by 1 byte until either the alignment boundary or the end.
   // After changes made by SunnyMilkFuzzer, all address will be well-aligned,
   // this will not be executed.
@@ -211,13 +231,37 @@ size_t ForEachNonZeroByte(const uint8_t *Begin, const uint8_t *End,
   //   }
   // }
 
-  for (; P + Step <= End; P += Step)
-    if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
-      Bundle = HostToLE(Bundle);
-      for (size_t I = 0; I < Step; I++, Bundle >>= 8)
-        if (uint8_t V = Bundle & 0xff)
-          Handle8bitCounter(FirstFeature, P - Begin + I, V);
+  while(true) {
+    const uint8_t *P = Begin < CurMethodStart ? CurMethodStart : Begin;
+    const uint8_t *PMethodEnd = End > CurMethodEnd ? CurMethodEnd : End;
+    if (CurMethodHit) {
+      for (; P + Step <= PMethodEnd; P += Step) {
+        if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
+          Bundle = HostToLE(Bundle);
+          for (size_t I = 0; I < Step; I++, Bundle >>= 8) {
+            if (uint8_t V = Bundle & 0xff) {
+              Handle8bitCounter(FirstFeature, P - Begin + I, V);
+            }
+          }
+        }
+      }
     }
+    if (PMethodEnd == CurMethodEnd) {
+      // This method is exhausted, move to next
+      CurMethodIdx++;
+      if (CurMethodIdx >= kMethodNum) {
+        break;
+      }
+      CurMethodStart = CurMethodEnd;
+      CurMethodEnd += MethodSizeTable[CurMethodIdx];
+      CurMethodHit = MethodHitTable[CurMethodIdx];
+      if (End == CurMethodStart) {
+        break;
+      }
+    } else {
+      break;
+    }
+  }
 
   // Iterate by 1 byte until the end.
   // After changes made by SunnyMilkFuzzer, all address will be well-aligned,
@@ -268,18 +312,30 @@ TracePC::CollectFeatures(Callback HandleFeature) const {
 
   size_t FirstFeature = 0;
 
+  int CurMethodIdx = 0;
+  uint8_t *CurMethodStart = Modules[0].Regions[0].Start;
+  uint8_t *CurMethodEnd = CurMethodStart + MethodSizeTable[CurMethodIdx];
+  uint8_t CurMethodHit = MethodHitTable[CurMethodIdx];
+
   for (size_t i = 0; i < NumModules; i++) {
     for (size_t r = 0; r < Modules[i].NumRegions; r++) {
       if (!Modules[i].Regions[r].Enabled) continue;
       FirstFeature += 8 * ForEachNonZeroByte(Modules[i].Regions[r].Start,
-                                             Modules[i].Regions[r].Stop,
-                                             FirstFeature, Handle8bitCounter);
+                                              Modules[i].Regions[r].Stop,
+                                              CurMethodIdx,
+                                              CurMethodStart,
+                                              CurMethodEnd,
+                                              CurMethodHit,
+                                              kMethodNum,
+                                              MethodSizeTable,
+                                              MethodHitTable,
+                                            FirstFeature, Handle8bitCounter);
     }
   }
 
-  FirstFeature +=
-      8 * ForEachNonZeroByte(ExtraCountersBegin(), ExtraCountersEnd(),
-                             FirstFeature, Handle8bitCounter);
+  // FirstFeature +=
+  //     8 * ForEachNonZeroByte(ExtraCountersBegin(), ExtraCountersEnd(),
+  //                            FirstFeature, Handle8bitCounter);
 
   if (UseValueProfileMask) {
     ValueProfileMap.ForEach([&](size_t Idx) {
