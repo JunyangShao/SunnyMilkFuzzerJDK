@@ -36,6 +36,20 @@
 #endif
 
 namespace fuzzer {
+
+// For SunnyMilkFuzzer
+void (*SetGloablFeatureMap_ptr)(uint16_t*) = NULL;
+
+void SetSetGloablFeatureMap(void (*setter)(uint16_t*)) {
+  SetGloablFeatureMap_ptr = setter;
+}
+
+void SetGlobalFeatureMap(uint16_t *TheMap) {
+  if (SetGloablFeatureMap_ptr) {
+    SetGloablFeatureMap_ptr(TheMap);
+  }
+}
+
 static const size_t kMaxUnitSizeToPrint = 256;
 
 thread_local bool Fuzzer::IsMyThread;

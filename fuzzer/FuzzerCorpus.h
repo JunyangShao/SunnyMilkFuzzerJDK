@@ -25,6 +25,8 @@
 
 namespace fuzzer {
 
+void SetGlobalFeatureMap(uint16_t *TheMap);
+
 struct InputInfo {
   Unit U;  // The actual input data.
   std::chrono::microseconds TimeOfUnit;
@@ -166,6 +168,7 @@ public:
       : Entropic(Entropic), OutputCorpus(OutputCorpus) {
     memset(InputSizesPerFeature, 0, sizeof(InputSizesPerFeature));
     memset(SmallestElementPerFeature, 0, sizeof(SmallestElementPerFeature));
+    SetGlobalFeatureMap(GlobalFeatureFreqs);
   }
   ~InputCorpus() {
     for (auto II : Inputs)
