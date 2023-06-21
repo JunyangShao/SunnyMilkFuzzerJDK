@@ -4,21 +4,22 @@
 #include "FuzzerDefs.h"
 #include "FuzzerPlatform.h"
 #include "FuzzerTracePC.h"
+#include "FuzzerCorpus.h"
 
 JNIEnv *env;
 jclass cls;
 jmethodID fuzz_one_method;
+int smf_cov_map_size = 4096;
+int smf_method_number = 0;
+uint8_t* smf_cov_map = NULL;
+int*     smf_method_size_table = NULL;
+uint8_t* smf_method_hit_table = NULL;
+
+void SetLibFuzzerFeatureMap(uint16_t * the_map) {
+    env->SetLibFuzzerFeatureMap(the_map);
+}
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
-    // // Convert the uint8_t array to a jchar array
-    // jchar *jcharData = new jchar[Size];
-    // for (size_t i = 0; i < Size; ++i) {
-    //     jcharData[i] = static_cast<jchar>(Data[i]);
-    // }
-
-    // // Create a jstring from the jchar array and the given size
-    // jstring input_str = env->NewString(jcharData, Size);
-
     char *jcharData = new char[Size + 1];
     memcpy(jcharData, Data, Size);
     jcharData[Size] = '\0';
@@ -40,15 +41,22 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     // Clean up the jchar array
     delete[] jcharData;
     env->DeleteLocalRef(input_str);
-    
-    // Randomly set the coverage counters
-    // uint8_t* ctrs = env->GetSunnyMilkFuzzerCoverage();
-    // static int iii = 0;
-    // static int jjj = 0;
-    // if (iii++ < 100) {
-    //     ctrs[0] = 1;
-    //     ctrs[(jjj++) & 0xFFFF] = 1;
-    // }
+
+    // Check if the coverage map has been updated
+    int new_smf_cov_map_size = env->GetSunnyMilkFuzzerCoverageSize();
+    int new_smf_method_number = env->GetSunnyMilkFuzzerMethodNumber();
+    if (new_smf_cov_map_size != smf_cov_map_size ||
+        new_smf_method_number != smf_method_number) {
+        fuzzer::TPC.HandleInline8bitCountersInit(
+            smf_cov_map + smf_cov_map_size,
+            smf_cov_map + new_smf_cov_map_size);
+        smf_cov_map_size = new_smf_cov_map_size;
+        smf_method_number = new_smf_method_number;
+        fuzzer::TPC.HandleMethodTablesInit(
+            smf_method_size_table,
+            smf_method_hit_table,
+            smf_method_number);
+    }
 
     return 0; // Return a value to match the int return type
 }
@@ -73,10 +81,10 @@ int main(int argc, char *argv[]) {
     }
 
     options[0].optionString = class_path;
-    options[1].optionString = "-XX:TieredStopAtLevel=1";
-    options[2].optionString = "-XX:+UseParallelGC";
-    options[3].optionString = "-XX:+CriticalJNINatives";
-    options[4].optionString = "-Xmx1800m";
+    // options[1].optionString = "-XX:TieredStopAtLevel=1";
+    options[1].optionString = "-XX:+UseParallelGC";
+    options[2].optionString = "-XX:+CriticalJNINatives";
+    options[3].optionString = "-Xmx1800m";
     
     // options[2].optionString = "-XX:CICompilerCount=1";
     // options[2].optionString = "-XX:+UnlockDiagnosticVMOptions";
@@ -85,7 +93,7 @@ int main(int argc, char *argv[]) {
     // options[1].optionString = "-Xint";
     vm_args.version = JNI_VERSION_1_8;
     vm_args.options = options;
-    vm_args.nOptions = 5;
+    vm_args.nOptions = 4;
     vm_args.ignoreUnrecognized = JNI_FALSE;
 
     jint res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
@@ -94,10 +102,17 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    uint8_t* ctrs = env->GetSunnyMilkFuzzerCoverage();
-    fuzzer::TPC.HandleInline8bitCountersInit(ctrs, ctrs + (1 << 16));
+    smf_cov_map = env->GetSunnyMilkFuzzerCoverage();
+    fuzzer::TPC.HandleInline8bitCountersInit(smf_cov_map, smf_cov_map + smf_cov_map_size);
     env->ClearSMFTable();
-    if (((uintptr_t)ctrs & 4096u != 0)) {
+    smf_method_hit_table = env->GetSunnyMilkFuzzerMethodHitTable();
+    smf_method_size_table = env->GetSunnyMilkFuzzerMethodSizeTable();
+    fuzzer::TPC.HandleMethodTablesInit(
+        smf_method_size_table,
+        smf_method_hit_table,
+        smf_method_number);
+    fuzzer::SetSetGloablFeatureMap(SetLibFuzzerFeatureMap);
+    if (((uintptr_t)smf_cov_map & 4096u != 0)) {
         printf("Coverage map is not aligned!\n");
         return 1;
     }

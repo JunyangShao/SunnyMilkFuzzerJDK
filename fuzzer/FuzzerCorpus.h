@@ -27,6 +27,8 @@ namespace fuzzer {
 
 void SetGlobalFeatureMap(uint16_t *TheMap);
 
+void SetSetGloablFeatureMap(void (*setter)(uint16_t*));
+
 struct InputInfo {
   Unit U;  // The actual input data.
   std::chrono::microseconds TimeOfUnit;

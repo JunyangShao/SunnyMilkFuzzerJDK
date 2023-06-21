@@ -72,7 +72,6 @@ class TracePC {
   void HandleInline8bitCountersInit(uint8_t *Start, uint8_t *Stop);
   // For SunnyMilkFuzzer
   void HandleMethodTablesInit(int* SizeTable, uint8_t *HitTable, size_t MethodNum);
-  void HandleInline8bitCountersMethodTableInit(uint8_t *Start, uint8_t *Stop);
   void HandlePCsInit(const uintptr_t *Start, const uintptr_t *Stop);
   void HandleCallerCallee(uintptr_t Caller, uintptr_t Callee);
   template <class T> void HandleCmp(uintptr_t PC, T Arg1, T Arg2);
