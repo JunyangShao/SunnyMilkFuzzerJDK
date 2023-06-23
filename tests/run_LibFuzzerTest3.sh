@@ -1,4 +1,5 @@
 export JAVA_HOME=../SunnyMilkJDK/build/linux-x86_64-server-release/jdk
+#export JAVA_HOME=../SunnyMilkJDK/build/linux-x86_64-server-slowdebug/jdk
 
 # To include a library path and make it the most prioritized search path, include it as "xxx.h" and when compile, -I$DIR_CONTAINING_XXX.
 

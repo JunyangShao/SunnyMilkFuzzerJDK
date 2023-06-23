@@ -5,7 +5,7 @@ export JAVA_HOME=../SunnyMilkJDK/build/linux-x86_64-server-release/jdk
 # Compilation for the command:
 $JAVA_HOME/bin/javac LibFuzzerTest1.java
 
-g++ -fPIC -pthread -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -I./fuzzer -L"${JAVA_HOME}/lib/server" -L../fuzzer -o LibFuzzerLauncher ../src/LibFuzzerLauncher.cpp -ljvm -lFuzzer -ldl
+g++ -fPIC -pthread -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -I../fuzzer -L"${JAVA_HOME}/lib/server" -L../fuzzer -o LibFuzzerLauncher ../src/LibFuzzerLauncher.cpp -ljvm -lFuzzer -ldl
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server
 

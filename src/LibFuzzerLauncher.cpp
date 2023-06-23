@@ -47,6 +47,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
     int new_smf_method_number = env->GetSunnyMilkFuzzerMethodNumber();
     if (new_smf_cov_map_size != smf_cov_map_size ||
         new_smf_method_number != smf_method_number) {
+        // printf("[SMF]\t Map size changed! Cov Map Size = %d, Method Number = %d\n",
+        //     new_smf_cov_map_size, new_smf_method_number);
         fuzzer::TPC.HandleInline8bitCountersInit(
             smf_cov_map + smf_cov_map_size,
             smf_cov_map + new_smf_cov_map_size);
@@ -56,6 +58,25 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
             smf_method_size_table,
             smf_method_hit_table,
             smf_method_number);
+        // printf("[SMF]\t Now printing the method size table...\n");
+        // for (int i = 0; i < smf_method_number; i++) {
+        //     printf("%d\t", smf_method_size_table[i]);
+        // }
+        // printf("\n[SMF]\t Now printing the method hit table...\n");
+        // for (int i = 0; i < smf_method_number; i++) {
+        //     printf("%d\t", smf_method_hit_table[i]);
+        // }
+        // printf("\n[SMF]\t Now printing the map for each hit method...\n");
+        // for (int i = 0; i < smf_method_number; i++) {
+        //     if (smf_method_hit_table[i] == 0) {
+        //         continue;
+        //     }
+        //     for (int j = 0; j < smf_method_size_table[i]; j++) {
+        //         printf("%d ", smf_cov_map[j]);
+        //     }
+        //     printf("\n");
+        //     smf_cov_map += smf_method_size_table[i];
+        // }
     }
 
     return 0; // Return a value to match the int return type
@@ -82,18 +103,18 @@ int main(int argc, char *argv[]) {
 
     options[0].optionString = class_path;
     // options[1].optionString = "-XX:TieredStopAtLevel=1";
-    options[1].optionString = "-XX:+UseParallelGC";
-    options[2].optionString = "-XX:+CriticalJNINatives";
-    options[3].optionString = "-Xmx1800m";
+    // options[1].optionString = "-XX:+UseParallelGC";
+    // options[2].optionString = "-XX:+CriticalJNINatives";
+    // options[3].optionString = "-Xmx1800m";
     
     // options[2].optionString = "-XX:CICompilerCount=1";
     // options[2].optionString = "-XX:+UnlockDiagnosticVMOptions";
     // options[3].optionString = "-XX:+PrintAssembly";
     // options[4].optionString = "-XX:+PrintCompilation";
-    // options[1].optionString = "-Xint";
+    options[1].optionString = "-Xint";
     vm_args.version = JNI_VERSION_1_8;
     vm_args.options = options;
-    vm_args.nOptions = 4;
+    vm_args.nOptions = 2;
     vm_args.ignoreUnrecognized = JNI_FALSE;
 
     jint res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);

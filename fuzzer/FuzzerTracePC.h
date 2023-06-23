@@ -320,14 +320,14 @@ TracePC::CollectFeatures(Callback HandleFeature) const {
     for (size_t r = 0; r < Modules[i].NumRegions; r++) {
       if (!Modules[i].Regions[r].Enabled) continue;
       FirstFeature += 8 * ForEachNonZeroByte(Modules[i].Regions[r].Start,
-                                              Modules[i].Regions[r].Stop,
-                                              CurMethodIdx,
-                                              CurMethodStart,
-                                              CurMethodEnd,
-                                              CurMethodHit,
-                                              kMethodNum,
-                                              MethodSizeTable,
-                                              MethodHitTable,
+                                            Modules[i].Regions[r].Stop,
+                                            CurMethodIdx,
+                                            CurMethodStart,
+                                            CurMethodEnd,
+                                            CurMethodHit,
+                                            kMethodNum,
+                                            MethodSizeTable,
+                                            MethodHitTable,
                                             FirstFeature, Handle8bitCounter);
     }
   }
