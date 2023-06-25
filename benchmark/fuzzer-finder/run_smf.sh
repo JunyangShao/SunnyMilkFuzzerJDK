@@ -24,11 +24,15 @@ rm -r fuzzerOut
 mkdir fuzzerOut
 rm -r $4
 mkdir $4
+rm /home/junyangshao/Desktop/playground/research/SunnyMilkFuzzerJDK/benchmark/fuzzer-finder/smf_out/*
 if [[ $# -eq 5 ]]; then
 	timeout "$5"s ./LibFuzzerLauncher fuzzerOut $2SMF "---p=$3" > $4/smf-out 2>&1
 else
 	./LibFuzzerLauncher fuzzerOut $2SMF "---p=$3" > $4/smf-out 2>&1
 fi
+mv /home/junyangshao/Desktop/playground/research/SunnyMilkFuzzerJDK/benchmark/fuzzer-finder/smf_out \
+	/home/junyangshao/Desktop/playground/research/SunnyMilkFuzzerJDK/benchmark/fuzzer-finder/smf_out_old
+mkdir /home/junyangshao/Desktop/playground/research/SunnyMilkFuzzerJDK/benchmark/fuzzer-finder/smf_out
 sh ../../fuzzer-finder/jacoco_report.sh $2Main $3 $4
 mv fuzzerOut $4
 $JAZZER_DIR/clean.sh

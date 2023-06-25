@@ -25,9 +25,9 @@
 
 namespace fuzzer {
 
-void SetGlobalFeatureMap(uint16_t *TheMap);
+void SetGlobalFeatureMap(uint32_t *TheMap);
 
-void SetSetGloablFeatureMap(void (*setter)(uint16_t*));
+void SetSetGloablFeatureMap(void (*setter)(uint32_t*));
 
 struct InputInfo {
   Unit U;  // The actual input data.
@@ -170,7 +170,7 @@ public:
       : Entropic(Entropic), OutputCorpus(OutputCorpus) {
     memset(InputSizesPerFeature, 0, sizeof(InputSizesPerFeature));
     memset(SmallestElementPerFeature, 0, sizeof(SmallestElementPerFeature));
-    SetGlobalFeatureMap(GlobalFeatureFreqs);
+    SetGlobalFeatureMap(InputSizesPerFeature);
   }
   ~InputCorpus() {
     for (auto II : Inputs)

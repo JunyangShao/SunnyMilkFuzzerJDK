@@ -38,13 +38,13 @@
 namespace fuzzer {
 
 // For SunnyMilkFuzzer
-void (*SetGloablFeatureMap_ptr)(uint16_t*) = NULL;
+void (*SetGloablFeatureMap_ptr)(uint32_t*) = NULL;
 
-void SetSetGloablFeatureMap(void (*setter)(uint16_t*)) {
+void SetSetGloablFeatureMap(void (*setter)(uint32_t*)) {
   SetGloablFeatureMap_ptr = setter;
 }
 
-void SetGlobalFeatureMap(uint16_t *TheMap) {
+void SetGlobalFeatureMap(uint32_t *TheMap) {
   if (SetGloablFeatureMap_ptr) {
     SetGloablFeatureMap_ptr(TheMap);
   }

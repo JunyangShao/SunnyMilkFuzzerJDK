@@ -5,6 +5,7 @@
 #include "FuzzerPlatform.h"
 #include "FuzzerTracePC.h"
 #include "FuzzerCorpus.h"
+#include <iostream>
 
 JNIEnv *env;
 jclass cls;
@@ -15,7 +16,7 @@ uint8_t* smf_cov_map = NULL;
 int*     smf_method_size_table = NULL;
 uint8_t* smf_method_hit_table = NULL;
 
-void SetLibFuzzerFeatureMap(uint16_t * the_map) {
+void SetLibFuzzerFeatureMap(uint32_t * the_map) {
     env->SetLibFuzzerFeatureMap(the_map);
 }
 
@@ -44,19 +45,34 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 
     // Check if the coverage map has been updated
     int new_smf_cov_map_size = env->GetSunnyMilkFuzzerCoverageSize();
-    int new_smf_method_number = env->GetSunnyMilkFuzzerMethodNumber();
-    if (new_smf_cov_map_size != smf_cov_map_size ||
-        new_smf_method_number != smf_method_number) {
+    if (new_smf_cov_map_size != smf_cov_map_size) {
         fuzzer::TPC.HandleInline8bitCountersInit(
             smf_cov_map + smf_cov_map_size,
             smf_cov_map + new_smf_cov_map_size);
         smf_cov_map_size = new_smf_cov_map_size;
+    }
+    int new_smf_method_number = env->GetSunnyMilkFuzzerMethodNumber();
+    if (new_smf_method_number != smf_method_number) {
         smf_method_number = new_smf_method_number;
         fuzzer::TPC.HandleMethodTablesInit(
             smf_method_size_table,
             smf_method_hit_table,
             smf_method_number);
     }
+
+    // uint32_t smf_total_counted = 0;
+    // uint32_t smf_total_metod_size = 0;
+    // // count the total size of activated methods
+    // for (int i = 0; i < smf_method_number; i++) {
+    //     if (smf_method_hit_table[i] != 0) {
+    //         smf_total_counted += smf_method_size_table[i];
+    //     }
+    //     smf_total_metod_size += smf_method_size_table[i];
+    // }
+    // std::cout << "[SMF]\t smf_total_counted: " << smf_total_counted << std::endl;
+    // std::cout << "[SMF]\t smf_method_number: " << smf_method_number << std::endl;
+    // std::cout << "[SMF]\t smf_cov_map_size: " << smf_cov_map_size << std::endl;
+    // std::cout << "[SMF]\t smf_total_metod_size: " << smf_total_metod_size << std::endl;
 
     return 0; // Return a value to match the int return type
 }
@@ -90,7 +106,7 @@ int main(int argc, char *argv[]) {
     // options[2].optionString = "-XX:+UnlockDiagnosticVMOptions";
     // options[3].optionString = "-XX:+PrintAssembly";
     // options[4].optionString = "-XX:+PrintCompilation";
-    // options[1].optionString = "-Xint";
+    // options[4].optionString = "-Xint";
     vm_args.version = JNI_VERSION_1_8;
     vm_args.options = options;
     vm_args.nOptions = 4;
@@ -105,8 +121,8 @@ int main(int argc, char *argv[]) {
     smf_cov_map = env->GetSunnyMilkFuzzerCoverage();
     fuzzer::TPC.HandleInline8bitCountersInit(smf_cov_map, smf_cov_map + smf_cov_map_size);
     env->ClearSMFTable();
-    smf_method_hit_table = env->GetSunnyMilkFuzzerMethodHitTable();
     smf_method_size_table = env->GetSunnyMilkFuzzerMethodSizeTable();
+    smf_method_hit_table = env->GetSunnyMilkFuzzerMethodHitTable();
     fuzzer::TPC.HandleMethodTablesInit(
         smf_method_size_table,
         smf_method_hit_table,

@@ -17,6 +17,8 @@
 
 #include <set>
 #include <unordered_map>
+#include <iostream>
+#include <immintrin.h>
 
 namespace fuzzer {
 
@@ -87,7 +89,7 @@ class TracePC {
     ValueProfileMap.Reset();
     ClearExtraCounters();
     ClearInlineCounters();
-    memset(MethodHitTable, 0, kMethodNum);
+    // memset(MethodHitTable, 0, kMethodNum);
   }
 
   void ClearInlineCounters();
@@ -197,6 +199,7 @@ size_t ForEachNonZeroByte(const uint8_t *Begin, const uint8_t *End,
                         size_t kMethodNum,
                         int *MethodSizeTable,
                         uint8_t *MethodHitTable,
+                        uint32_t &TotalCounted,
                         size_t FirstFeature, Callback Handle8bitCounter) {
   if (CurMethodIdx >= kMethodNum) {
     // No more methods, no need to scan the rest.
@@ -230,11 +233,47 @@ size_t ForEachNonZeroByte(const uint8_t *Begin, const uint8_t *End,
   //   }
   // }
 
-  while(true) {
-    const uint8_t *P = Begin < CurMethodStart ? CurMethodStart : Begin;
-    const uint8_t *PMethodEnd = End > CurMethodEnd ? CurMethodEnd : End;
-    if (CurMethodHit) {
-      for (; P + Step <= PMethodEnd; P += Step) {
+  // while(true) {
+  //   const uint8_t *P = Begin < CurMethodStart ? CurMethodStart : Begin;
+  //   const uint8_t *PMethodEnd = End > CurMethodEnd ? CurMethodEnd : End;
+  //   if (CurMethodHit) {
+  //     for (; P + Step <= PMethodEnd; P += Step) {
+  //       TotalCounted += Step;
+  //       if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
+  //         Bundle = HostToLE(Bundle);
+  //         for (size_t I = 0; I < Step; I++, Bundle >>= 8) {
+  //           if (uint8_t V = Bundle & 0xff) {
+  //             Handle8bitCounter(FirstFeature, P - Begin + I, V);
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  //   if (PMethodEnd == CurMethodEnd) {
+  //     // This method is exhausted, move to next
+  //     CurMethodIdx++;
+  //     if (CurMethodIdx >= kMethodNum) {
+  //       break;
+  //     }
+  //     CurMethodStart = CurMethodEnd;
+  //     CurMethodEnd += MethodSizeTable[CurMethodIdx];
+  //     CurMethodHit = MethodHitTable[CurMethodIdx];
+  //     if (End == CurMethodStart) {
+  //       break;
+  //     }
+  //   } else {
+  //     break;
+  //   }
+  // }
+
+  const uint8_t *AvxP = Begin;
+  static const size_t AvxStep = sizeof(__m256i);
+  for (; AvxP + AvxStep <= End; AvxP += AvxStep) {
+    __m256i AvxV = _mm256_loadu_si256((__m256i*)AvxP);
+    if (!_mm256_testz_si256(AvxV, AvxV)) {
+      const uint8_t *P = AvxP;
+      const uint8_t *PEnd = AvxP + AvxStep;
+      for (; P + Step <= PEnd; P += Step) {
         if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
           Bundle = HostToLE(Bundle);
           for (size_t I = 0; I < Step; I++, Bundle >>= 8) {
@@ -244,21 +283,6 @@ size_t ForEachNonZeroByte(const uint8_t *Begin, const uint8_t *End,
           }
         }
       }
-    }
-    if (PMethodEnd == CurMethodEnd) {
-      // This method is exhausted, move to next
-      CurMethodIdx++;
-      if (CurMethodIdx >= kMethodNum) {
-        break;
-      }
-      CurMethodStart = CurMethodEnd;
-      CurMethodEnd += MethodSizeTable[CurMethodIdx];
-      CurMethodHit = MethodHitTable[CurMethodIdx];
-      if (End == CurMethodStart) {
-        break;
-      }
-    } else {
-      break;
     }
   }
 
@@ -315,22 +339,27 @@ TracePC::CollectFeatures(Callback HandleFeature) const {
   uint8_t *CurMethodStart = Modules[0].Regions[0].Start;
   uint8_t *CurMethodEnd = CurMethodStart + MethodSizeTable[CurMethodIdx];
   uint8_t CurMethodHit = MethodHitTable[CurMethodIdx];
+  uint32_t TotalCounted = 0;
 
   for (size_t i = 0; i < NumModules; i++) {
     for (size_t r = 0; r < Modules[i].NumRegions; r++) {
       if (!Modules[i].Regions[r].Enabled) continue;
       FirstFeature += 8 * ForEachNonZeroByte(Modules[i].Regions[r].Start,
-                                              Modules[i].Regions[r].Stop,
-                                              CurMethodIdx,
-                                              CurMethodStart,
-                                              CurMethodEnd,
-                                              CurMethodHit,
-                                              kMethodNum,
-                                              MethodSizeTable,
-                                              MethodHitTable,
+                                            Modules[i].Regions[r].Stop,
+                                            CurMethodIdx,
+                                            CurMethodStart,
+                                            CurMethodEnd,
+                                            CurMethodHit,
+                                            kMethodNum,
+                                            MethodSizeTable,
+                                            MethodHitTable,
+                                            TotalCounted,
                                             FirstFeature, Handle8bitCounter);
     }
   }
+
+  // std::cout << "[LibFuzzer]\t TotalCounted: " << TotalCounted << std::endl;
+  // std::cout << "[LibFuzzer]\t kMethodNum: " << kMethodNum << std::endl;
 
   // FirstFeature +=
   //     8 * ForEachNonZeroByte(ExtraCountersBegin(), ExtraCountersEnd(),

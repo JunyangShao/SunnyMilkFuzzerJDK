@@ -1,4 +1,5 @@
 export JAVA_HOME=../SunnyMilkJDK/build/linux-x86_64-server-release/jdk
+#export JAVA_HOME=../SunnyMilkJDK/build/linux-x86_64-server-slowdebug/jdk
 
 # To include a library path and make it the most prioritized search path, include it as "xxx.h" and when compile, -I$DIR_CONTAINING_XXX.
 
@@ -12,6 +13,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JAVA_HOME/lib/server
 mkdir fuzzerOut
 #perf record ./LibFuzzerLauncher fuzzerOut LibFuzzerTest3
 #perf report
-./LibFuzzerLauncher fuzzerOut LibFuzzerTest3 "---p=./fastjson-1.2.75.jar"
+perf record ./LibFuzzerLauncher fuzzerOut LibFuzzerTest3 "---p=./fastjson-1.2.75.jar"
+perf report
 rm -r fuzzerOut
 ./clean.sh

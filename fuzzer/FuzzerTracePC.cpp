@@ -74,8 +74,8 @@ void TracePC::HandleInline8bitCountersInit(uint8_t *Start, uint8_t *Stop) {
 
 void TracePC::HandleMethodTablesInit(int* SizeTable, uint8_t *HitTable, size_t MethodNum) {
   std::atomic_thread_fence(std::memory_order_release);
-  MethodHitTable = HitTable;
   MethodSizeTable = SizeTable;
+  MethodHitTable = HitTable;
   kMethodNum = MethodNum;
   std::atomic_thread_fence(std::memory_order_acquire);
 }
