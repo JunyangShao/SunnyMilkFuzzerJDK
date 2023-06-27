@@ -2,6 +2,10 @@ import os
 import subprocess
 import sys
 import re
+import shutil
+from datetime import datetime
+from dateutil.rrule import rrule, MINUTELY
+from matplotlib import pyplot as plt
 
 def parse_file(file_path):
     with open(file_path, 'r') as file:
@@ -16,15 +20,15 @@ def parse_file(file_path):
     return 0
 
 # image names
-# image_names = [
-#     "janino", "jersey", "json-java",
-#     "jsoup", "mysql-connector-j", "slf4j-api", "spring-cloud-sleuth-brave",
-#     "fastjson2", "guice", "java-example", "jettison", "json-sanitizer",
-#     "jul-to-slf4j", "osgi", "snakeyaml", "spring-data-mongodb",
-#     "gson", "jakarta-mail-api", "javaparser", "joda-time", "json-smart-v2",
-#     "log4j2", "retrofit", "spring-boot", "stringtemplate4"
-# ]
-image_names = ["json-java"]
+image_names = [
+    "janino", "jersey", "json-java",
+    "jsoup", "mysql-connector-j", "slf4j-api", "spring-cloud-sleuth-brave",
+    "fastjson2", "guice", "java-example", "jettison", "json-sanitizer",
+    "jul-to-slf4j", "osgi", "snakeyaml", "spring-data-mongodb",
+    "gson", "jakarta-mail-api", "javaparser", "joda-time", "json-smart-v2",
+    "log4j2", "retrofit", "spring-boot", "stringtemplate4"
+]
+# image_names = ["json-java"]
 image_names_excluded = ["jersey","mysql-connector-j", "guice", "self4j-api",
                         "spring-cloud-sleuth-brave", "java-example", "json-sanitizer",
                         "osgi", "snakeyaml", "spring-data-mongodb", "log4j2",
@@ -44,6 +48,9 @@ if len(sys.argv) > 1:
         if len(sys.argv) > 2:
             running_time = int(sys.argv[2])
     if mode == "benchmark":
+        if len(sys.argv) > 2:
+            suffix = sys.argv[2]
+    if mode == "plot":
         if len(sys.argv) > 2:
             suffix = sys.argv[2]
             
@@ -145,3 +152,86 @@ if mode == "backup":
         for fuzzer in fuzzer_list:
             os.system(f"mv ../extracted/{image_name}/{fuzzer}JazzerReport/ ../extracted/{image_name}/{fuzzer}JazzerReport{suffix}")
             os.system(f"mv ../extracted/{image_name}/{fuzzer}SMFReport/ ../extracted/{image_name}/{fuzzer}SMFReport{suffix}")
+
+def get_file_dates(path):
+    files = os.listdir(path)
+    dates = []
+    for file in files:
+        full_path = os.path.join(path, file)
+        timestamp = os.path.getmtime(full_path)
+        date = datetime.fromtimestamp(timestamp)
+        dates.append(date)
+    return dates
+
+if mode == "plot":
+    for image_name in image_names:
+        if image_name in image_names_excluded:
+            continue
+        fuzzer_list = set()
+        for fuzzer in os.listdir(f"../extracted/{image_name}"):
+            if fuzzer.endswith(".java"):
+                fuzzer_list.add(fuzzer.replace("SMF.java", "").replace("Jazzer.java", "").replace("Main.java", ""))
+
+        class_path = ""
+        first = True
+        for file in os.listdir(f"../extracted/{image_name}"):
+            if file.endswith(".jar"):
+                # need only the name of the jar, not the path
+                file = file.split("/")[-1]
+                if first:
+                    class_path += f"{file}"
+                    first = False
+                else:
+                    class_path += f":{file}"    
+
+        for fuzzer in fuzzer_list:
+            coverage_over_time = dict()
+            for fuzzer_engine in ["Jazzer", "SMF"]:
+                coverage_over_time[fuzzer_engine] = list()
+                os.chdir(f'../extracted/{image_name}/')
+                shutil.rmtree('fuzzerOut', ignore_errors=True)
+                shutil.move(f'{fuzzer}{fuzzer_engine}Report{suffix}/fuzzerOut', './tmp_fuzzerOut')
+                os.mkdir('fuzzerOut')
+
+                file_dates = get_file_dates('./tmp_fuzzerOut')
+                file_dates.sort()
+                start_date = file_dates[0]
+                end_date = file_dates[-1]
+                print(start_date, end_date)
+
+                intervals = list(rrule(MINUTELY, dtstart=start_date, until=end_date, count=30))
+                print(intervals)
+                for i in range(len(intervals) - 1):
+                    for file in os.listdir('./tmp_fuzzerOut'):
+                        full_path = os.path.join('./tmp_fuzzerOut', file)
+                        timestamp = os.path.getmtime(full_path)
+                        date = datetime.fromtimestamp(timestamp)
+                        if intervals[i] <= date < intervals[i + 1]:
+                            shutil.move(full_path, './fuzzerOut/')
+                    
+                    os.system("rm ./jacoco.exec")
+
+                    # Execute jacoco script
+                    subprocess.run(['sh', '../../fuzzer-finder/jacoco_report.sh', f'{fuzzer}Main', class_path, 'TmpReport'])
+
+                    # Execute python script and get jazzer stats
+                    result = subprocess.run(['python', '../../fuzzer-finder/parse_jacoco_report.py', f'./TmpReport/index.html'],
+                                            check=True, text=True, stdout=subprocess.PIPE)
+                    jazzer_stats = int(result.stdout.strip())
+                    coverage_over_time[fuzzer_engine].append(jazzer_stats)
+                    shutil.rmtree('./TmpReport')
+                    print(coverage_over_time)
+                    os.system("rm ./jacoco.exec")
+
+                shutil.move('./fuzzerOut', f'{fuzzer}{fuzzer_engine}Report{suffix}/')
+                shutil.rmtree('./tmp_fuzzerOut')
+
+                os.chdir('../../fuzzer-finder/')
+
+            plt.plot(coverage_over_time['Jazzer'], label='Jazzer')
+            plt.plot(coverage_over_time['SMF'], label='SMF')
+            plt.title(f'[{image_name}] {fuzzer} {suffix}')
+            plt.xlabel('Time')
+            plt.ylabel('Coverage')
+            plt.legend()
+            plt.savefig(f'../plots/{image_name}_{fuzzer}_{suffix}.png')

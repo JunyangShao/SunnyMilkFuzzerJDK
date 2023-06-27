@@ -35,3 +35,5 @@ jzr_out*/
 
 *perf.data
 *perf.data.old
+
+*jacoco.exec
