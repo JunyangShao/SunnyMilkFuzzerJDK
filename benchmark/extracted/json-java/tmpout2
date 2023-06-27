@@ -1,0 +1,778 @@
+Compiled from "JSONTokener.java"
+public class org.json.JSONTokener {
+  private long character;
+
+  private boolean eof;
+
+  private long index;
+
+  private long line;
+
+  private char previous;
+
+  private final java.io.Reader reader;
+
+  private boolean usePrevious;
+
+  private long characterPreviousLine;
+
+  public org.json.JSONTokener(java.io.Reader);
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: aload_1
+       6: invokevirtual #7                  // Method java/io/Reader.markSupported:()Z
+       9: ifeq          16
+      12: aload_1
+      13: goto          24
+      16: new           #13                 // class java/io/BufferedReader
+      19: dup
+      20: aload_1
+      21: invokespecial #15                 // Method java/io/BufferedReader."<init>":(Ljava/io/Reader;)V
+      24: putfield      #18                 // Field reader:Ljava/io/Reader;
+      27: aload_0
+      28: iconst_0
+      29: putfield      #24                 // Field eof:Z
+      32: aload_0
+      33: iconst_0
+      34: putfield      #28                 // Field usePrevious:Z
+      37: aload_0
+      38: iconst_0
+      39: putfield      #31                 // Field previous:C
+      42: aload_0
+      43: lconst_0
+      44: putfield      #35                 // Field index:J
+      47: aload_0
+      48: lconst_1
+      49: putfield      #39                 // Field character:J
+      52: aload_0
+      53: lconst_0
+      54: putfield      #42                 // Field characterPreviousLine:J
+      57: aload_0
+      58: lconst_1
+      59: putfield      #45                 // Field line:J
+      62: return
+
+  public org.json.JSONTokener(java.io.InputStream);
+    Code:
+       0: aload_0
+       1: new           #48                 // class java/io/InputStreamReader
+       4: dup
+       5: aload_1
+       6: ldc           #50                 // String UTF-8
+       8: invokestatic  #52                 // Method java/nio/charset/Charset.forName:(Ljava/lang/String;)Ljava/nio/charset/Charset;
+      11: invokespecial #58                 // Method java/io/InputStreamReader."<init>":(Ljava/io/InputStream;Ljava/nio/charset/Charset;)V
+      14: invokespecial #61                 // Method "<init>":(Ljava/io/Reader;)V
+      17: return
+
+  public org.json.JSONTokener(java.lang.String);
+    Code:
+       0: aload_0
+       1: new           #62                 // class java/io/StringReader
+       4: dup
+       5: aload_1
+       6: invokespecial #64                 // Method java/io/StringReader."<init>":(Ljava/lang/String;)V
+       9: invokespecial #61                 // Method "<init>":(Ljava/io/Reader;)V
+      12: return
+
+  public void back() throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: getfield      #28                 // Field usePrevious:Z
+       4: ifne          16
+       7: aload_0
+       8: getfield      #35                 // Field index:J
+      11: lconst_0
+      12: lcmp
+      13: ifgt          26
+      16: new           #67                 // class org/json/JSONException
+      19: dup
+      20: ldc           #69                 // String Stepping back two steps is not supported
+      22: invokespecial #71                 // Method org/json/JSONException."<init>":(Ljava/lang/String;)V
+      25: athrow
+      26: aload_0
+      27: invokevirtual #72                 // Method decrementIndexes:()V
+      30: aload_0
+      31: iconst_1
+      32: putfield      #28                 // Field usePrevious:Z
+      35: aload_0
+      36: iconst_0
+      37: putfield      #24                 // Field eof:Z
+      40: return
+
+  private void decrementIndexes();
+    Code:
+       0: aload_0
+       1: dup
+       2: getfield      #35                 // Field index:J
+       5: lconst_1
+       6: lsub
+       7: putfield      #35                 // Field index:J
+      10: aload_0
+      11: getfield      #31                 // Field previous:C
+      14: bipush        13
+      16: if_icmpeq     28
+      19: aload_0
+      20: getfield      #31                 // Field previous:C
+      23: bipush        10
+      25: if_icmpne     49
+      28: aload_0
+      29: dup
+      30: getfield      #45                 // Field line:J
+      33: lconst_1
+      34: lsub
+      35: putfield      #45                 // Field line:J
+      38: aload_0
+      39: aload_0
+      40: getfield      #42                 // Field characterPreviousLine:J
+      43: putfield      #39                 // Field character:J
+      46: goto          68
+      49: aload_0
+      50: getfield      #39                 // Field character:J
+      53: lconst_0
+      54: lcmp
+      55: ifle          68
+      58: aload_0
+      59: dup
+      60: getfield      #39                 // Field character:J
+      63: lconst_1
+      64: lsub
+      65: putfield      #39                 // Field character:J
+      68: return
+
+  public static int dehexchar(char);
+    Code:
+       0: iload_0
+       1: bipush        48
+       3: if_icmplt     17
+       6: iload_0
+       7: bipush        57
+       9: if_icmpgt     17
+      12: iload_0
+      13: bipush        48
+      15: isub
+      16: ireturn
+      17: iload_0
+      18: bipush        65
+      20: if_icmplt     34
+      23: iload_0
+      24: bipush        70
+      26: if_icmpgt     34
+      29: iload_0
+      30: bipush        55
+      32: isub
+      33: ireturn
+      34: iload_0
+      35: bipush        97
+      37: if_icmplt     51
+      40: iload_0
+      41: bipush        102
+      43: if_icmpgt     51
+      46: iload_0
+      47: bipush        87
+      49: isub
+      50: ireturn
+      51: iconst_m1
+      52: ireturn
+
+  public boolean end();
+    Code:
+       0: aload_0
+       1: getfield      #24                 // Field eof:Z
+       4: ifeq          18
+       7: aload_0
+       8: getfield      #28                 // Field usePrevious:Z
+      11: ifne          18
+      14: iconst_1
+      15: goto          19
+      18: iconst_0
+      19: ireturn
+
+  public boolean more() throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: getfield      #28                 // Field usePrevious:Z
+       4: ifeq          9
+       7: iconst_1
+       8: ireturn
+       9: aload_0
+      10: getfield      #18                 // Field reader:Ljava/io/Reader;
+      13: iconst_1
+      14: invokevirtual #75                 // Method java/io/Reader.mark:(I)V
+      17: goto          32
+      20: astore_1
+      21: new           #67                 // class org/json/JSONException
+      24: dup
+      25: ldc           #81                 // String Unable to preserve stream position
+      27: aload_1
+      28: invokespecial #83                 // Method org/json/JSONException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+      31: athrow
+      32: aload_0
+      33: getfield      #18                 // Field reader:Ljava/io/Reader;
+      36: invokevirtual #86                 // Method java/io/Reader.read:()I
+      39: ifgt          49
+      42: aload_0
+      43: iconst_1
+      44: putfield      #24                 // Field eof:Z
+      47: iconst_0
+      48: ireturn
+      49: aload_0
+      50: getfield      #18                 // Field reader:Ljava/io/Reader;
+      53: invokevirtual #90                 // Method java/io/Reader.reset:()V
+      56: goto          71
+      59: astore_1
+      60: new           #67                 // class org/json/JSONException
+      63: dup
+      64: ldc           #93                 // String Unable to read the next character from the stream
+      66: aload_1
+      67: invokespecial #83                 // Method org/json/JSONException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+      70: athrow
+      71: iconst_1
+      72: ireturn
+    Exception table:
+       from    to  target type
+           9    17    20   Class java/io/IOException
+          32    48    59   Class java/io/IOException
+          49    56    59   Class java/io/IOException
+
+  public char next() throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: getfield      #28                 // Field usePrevious:Z
+       4: ifeq          20
+       7: aload_0
+       8: iconst_0
+       9: putfield      #28                 // Field usePrevious:Z
+      12: aload_0
+      13: getfield      #31                 // Field previous:C
+      16: istore_1
+      17: goto          41
+      20: aload_0
+      21: getfield      #18                 // Field reader:Ljava/io/Reader;
+      24: invokevirtual #86                 // Method java/io/Reader.read:()I
+      27: istore_1
+      28: goto          41
+      31: astore_2
+      32: new           #67                 // class org/json/JSONException
+      35: dup
+      36: aload_2
+      37: invokespecial #95                 // Method org/json/JSONException."<init>":(Ljava/lang/Throwable;)V
+      40: athrow
+      41: iload_1
+      42: ifgt          52
+      45: aload_0
+      46: iconst_1
+      47: putfield      #24                 // Field eof:Z
+      50: iconst_0
+      51: ireturn
+      52: aload_0
+      53: iload_1
+      54: invokevirtual #98                 // Method incrementIndexes:(I)V
+      57: aload_0
+      58: iload_1
+      59: i2c
+      60: putfield      #31                 // Field previous:C
+      63: aload_0
+      64: getfield      #31                 // Field previous:C
+      67: ireturn
+    Exception table:
+       from    to  target type
+          20    28    31   Class java/io/IOException
+
+  protected char getPrevious();
+    Code:
+       0: aload_0
+       1: getfield      #31                 // Field previous:C
+       4: ireturn
+
+  private void incrementIndexes(int);
+    Code:
+       0: iload_1
+       1: ifle          97
+       4: aload_0
+       5: dup
+       6: getfield      #35                 // Field index:J
+       9: lconst_1
+      10: ladd
+      11: putfield      #35                 // Field index:J
+      14: iload_1
+      15: bipush        13
+      17: if_icmpne     46
+      20: aload_0
+      21: dup
+      22: getfield      #45                 // Field line:J
+      25: lconst_1
+      26: ladd
+      27: putfield      #45                 // Field line:J
+      30: aload_0
+      31: aload_0
+      32: getfield      #39                 // Field character:J
+      35: putfield      #42                 // Field characterPreviousLine:J
+      38: aload_0
+      39: lconst_0
+      40: putfield      #39                 // Field character:J
+      43: goto          97
+      46: iload_1
+      47: bipush        10
+      49: if_icmpne     87
+      52: aload_0
+      53: getfield      #31                 // Field previous:C
+      56: bipush        13
+      58: if_icmpeq     79
+      61: aload_0
+      62: dup
+      63: getfield      #45                 // Field line:J
+      66: lconst_1
+      67: ladd
+      68: putfield      #45                 // Field line:J
+      71: aload_0
+      72: aload_0
+      73: getfield      #39                 // Field character:J
+      76: putfield      #42                 // Field characterPreviousLine:J
+      79: aload_0
+      80: lconst_0
+      81: putfield      #39                 // Field character:J
+      84: goto          97
+      87: aload_0
+      88: dup
+      89: getfield      #39                 // Field character:J
+      92: lconst_1
+      93: ladd
+      94: putfield      #39                 // Field character:J
+      97: return
+
+  public char next(char) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: invokevirtual #101                // Method next:()C
+       4: istore_2
+       5: iload_2
+       6: iload_1
+       7: if_icmpeq     37
+      10: iload_2
+      11: ifle          26
+      14: aload_0
+      15: iload_1
+      16: iload_2
+      17: invokedynamic #105,  0            // InvokeDynamic #0:makeConcatWithConstants:(CC)Ljava/lang/String;
+      22: invokevirtual #109                // Method syntaxError:(Ljava/lang/String;)Lorg/json/JSONException;
+      25: athrow
+      26: aload_0
+      27: iload_1
+      28: invokedynamic #113,  0            // InvokeDynamic #1:makeConcatWithConstants:(C)Ljava/lang/String;
+      33: invokevirtual #109                // Method syntaxError:(Ljava/lang/String;)Lorg/json/JSONException;
+      36: athrow
+      37: iload_2
+      38: ireturn
+
+  public java.lang.String next(int) throws org.json.JSONException;
+    Code:
+       0: iload_1
+       1: ifne          7
+       4: ldc           #116                // String
+       6: areturn
+       7: iload_1
+       8: newarray       char
+      10: astore_2
+      11: iconst_0
+      12: istore_3
+      13: iload_3
+      14: iload_1
+      15: if_icmpge     45
+      18: aload_2
+      19: iload_3
+      20: aload_0
+      21: invokevirtual #101                // Method next:()C
+      24: castore
+      25: aload_0
+      26: invokevirtual #118                // Method end:()Z
+      29: ifeq          39
+      32: aload_0
+      33: ldc           #121                // String Substring bounds error
+      35: invokevirtual #109                // Method syntaxError:(Ljava/lang/String;)Lorg/json/JSONException;
+      38: athrow
+      39: iinc          3, 1
+      42: goto          13
+      45: new           #123                // class java/lang/String
+      48: dup
+      49: aload_2
+      50: invokespecial #125                // Method java/lang/String."<init>":([C)V
+      53: areturn
+
+  public char nextClean() throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: invokevirtual #101                // Method next:()C
+       4: istore_1
+       5: iload_1
+       6: ifeq          15
+       9: iload_1
+      10: bipush        32
+      12: if_icmple     17
+      15: iload_1
+      16: ireturn
+      17: goto          0
+
+  public java.lang.String nextString(char) throws org.json.JSONException;
+    Code:
+       0: new           #128                // class java/lang/StringBuilder
+       3: dup
+       4: invokespecial #130                // Method java/lang/StringBuilder."<init>":()V
+       7: astore_3
+       8: aload_0
+       9: invokevirtual #101                // Method next:()C
+      12: istore_2
+      13: iload_2
+      14: lookupswitch  { // 4
+                     0: 56
+                    10: 56
+                    13: 56
+                    92: 63
+               default: 256
+          }
+      56: aload_0
+      57: ldc           #131                // String Unterminated string
+      59: invokevirtual #109                // Method syntaxError:(Ljava/lang/String;)Lorg/json/JSONException;
+      62: athrow
+      63: aload_0
+      64: invokevirtual #101                // Method next:()C
+      67: istore_2
+      68: iload_2
+      69: lookupswitch  { // 10
+                    34: 240
+                    39: 240
+                    47: 240
+                    92: 240
+                    98: 160
+                   102: 190
+                   110: 180
+                   114: 200
+                   116: 170
+                   117: 210
+               default: 249
+          }
+     160: aload_3
+     161: bipush        8
+     163: invokevirtual #133                // Method java/lang/StringBuilder.append:(C)Ljava/lang/StringBuilder;
+     166: pop
+     167: goto          8
+     170: aload_3
+     171: bipush        9
+     173: invokevirtual #133                // Method java/lang/StringBuilder.append:(C)Ljava/lang/StringBuilder;
+     176: pop
+     177: goto          8
+     180: aload_3
+     181: bipush        10
+     183: invokevirtual #133                // Method java/lang/StringBuilder.append:(C)Ljava/lang/StringBuilder;
+     186: pop
+     187: goto          8
+     190: aload_3
+     191: bipush        12
+     193: invokevirtual #133                // Method java/lang/StringBuilder.append:(C)Ljava/lang/StringBuilder;
+     196: pop
+     197: goto          8
+     200: aload_3
+     201: bipush        13
+     203: invokevirtual #133                // Method java/lang/StringBuilder.append:(C)Ljava/lang/StringBuilder;
+     206: pop
+     207: goto          8
+     210: aload_3
+     211: aload_0
+     212: iconst_4
+     213: invokevirtual #137                // Method next:(I)Ljava/lang/String;
+     216: bipush        16
+     218: invokestatic  #140                // Method java/lang/Integer.parseInt:(Ljava/lang/String;I)I
+     221: i2c
+     222: invokevirtual #133                // Method java/lang/StringBuilder.append:(C)Ljava/lang/StringBuilder;
+     225: pop
+     226: goto          8
+     229: astore        4
+     231: aload_0
+     232: ldc           #148                // String Illegal escape.
+     234: aload         4
+     236: invokevirtual #150                // Method syntaxError:(Ljava/lang/String;Ljava/lang/Throwable;)Lorg/json/JSONException;
+     239: athrow
+     240: aload_3
+     241: iload_2
+     242: invokevirtual #133                // Method java/lang/StringBuilder.append:(C)Ljava/lang/StringBuilder;
+     245: pop
+     246: goto          8
+     249: aload_0
+     250: ldc           #148                // String Illegal escape.
+     252: invokevirtual #109                // Method syntaxError:(Ljava/lang/String;)Lorg/json/JSONException;
+     255: athrow
+     256: iload_2
+     257: iload_1
+     258: if_icmpne     266
+     261: aload_3
+     262: invokevirtual #153                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     265: areturn
+     266: aload_3
+     267: iload_2
+     268: invokevirtual #133                // Method java/lang/StringBuilder.append:(C)Ljava/lang/StringBuilder;
+     271: pop
+     272: goto          8
+    Exception table:
+       from    to  target type
+         210   226   229   Class java/lang/NumberFormatException
+
+  public java.lang.String nextTo(char) throws org.json.JSONException;
+    Code:
+       0: new           #128                // class java/lang/StringBuilder
+       3: dup
+       4: invokespecial #130                // Method java/lang/StringBuilder."<init>":()V
+       7: astore_2
+       8: aload_0
+       9: invokevirtual #101                // Method next:()C
+      12: istore_3
+      13: iload_3
+      14: iload_1
+      15: if_icmpeq     34
+      18: iload_3
+      19: ifeq          34
+      22: iload_3
+      23: bipush        10
+      25: if_icmpeq     34
+      28: iload_3
+      29: bipush        13
+      31: if_icmpne     50
+      34: iload_3
+      35: ifeq          42
+      38: aload_0
+      39: invokevirtual #157                // Method back:()V
+      42: aload_2
+      43: invokevirtual #153                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+      46: invokevirtual #160                // Method java/lang/String.trim:()Ljava/lang/String;
+      49: areturn
+      50: aload_2
+      51: iload_3
+      52: invokevirtual #133                // Method java/lang/StringBuilder.append:(C)Ljava/lang/StringBuilder;
+      55: pop
+      56: goto          8
+
+  public java.lang.String nextTo(java.lang.String) throws org.json.JSONException;
+    Code:
+       0: new           #128                // class java/lang/StringBuilder
+       3: dup
+       4: invokespecial #130                // Method java/lang/StringBuilder."<init>":()V
+       7: astore_3
+       8: aload_0
+       9: invokevirtual #101                // Method next:()C
+      12: istore_2
+      13: aload_1
+      14: iload_2
+      15: invokevirtual #163                // Method java/lang/String.indexOf:(I)I
+      18: ifge          37
+      21: iload_2
+      22: ifeq          37
+      25: iload_2
+      26: bipush        10
+      28: if_icmpeq     37
+      31: iload_2
+      32: bipush        13
+      34: if_icmpne     53
+      37: iload_2
+      38: ifeq          45
+      41: aload_0
+      42: invokevirtual #157                // Method back:()V
+      45: aload_3
+      46: invokevirtual #153                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+      49: invokevirtual #160                // Method java/lang/String.trim:()Ljava/lang/String;
+      52: areturn
+      53: aload_3
+      54: iload_2
+      55: invokevirtual #133                // Method java/lang/StringBuilder.append:(C)Ljava/lang/StringBuilder;
+      58: pop
+      59: goto          8
+
+  public java.lang.Object nextValue() throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: invokevirtual #167                // Method nextClean:()C
+       4: istore_1
+       5: iload_1
+       6: lookupswitch  { // 4
+                    34: 48
+                    39: 48
+                    91: 79
+                   123: 54
+               default: 104
+          }
+      48: aload_0
+      49: iload_1
+      50: invokevirtual #170                // Method nextString:(C)Ljava/lang/String;
+      53: areturn
+      54: aload_0
+      55: invokevirtual #157                // Method back:()V
+      58: new           #173                // class org/json/JSONObject
+      61: dup
+      62: aload_0
+      63: invokespecial #175                // Method org/json/JSONObject."<init>":(Lorg/json/JSONTokener;)V
+      66: areturn
+      67: astore_3
+      68: new           #67                 // class org/json/JSONException
+      71: dup
+      72: ldc           #180                // String JSON Array or Object depth too large to process.
+      74: aload_3
+      75: invokespecial #83                 // Method org/json/JSONException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+      78: athrow
+      79: aload_0
+      80: invokevirtual #157                // Method back:()V
+      83: new           #182                // class org/json/JSONArray
+      86: dup
+      87: aload_0
+      88: invokespecial #184                // Method org/json/JSONArray."<init>":(Lorg/json/JSONTokener;)V
+      91: areturn
+      92: astore_3
+      93: new           #67                 // class org/json/JSONException
+      96: dup
+      97: ldc           #180                // String JSON Array or Object depth too large to process.
+      99: aload_3
+     100: invokespecial #83                 // Method org/json/JSONException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+     103: athrow
+     104: new           #128                // class java/lang/StringBuilder
+     107: dup
+     108: invokespecial #130                // Method java/lang/StringBuilder."<init>":()V
+     111: astore_3
+     112: iload_1
+     113: bipush        32
+     115: if_icmplt     141
+     118: ldc           #185                // String ,:]}/\\"[{;=#
+     120: iload_1
+     121: invokevirtual #163                // Method java/lang/String.indexOf:(I)I
+     124: ifge          141
+     127: aload_3
+     128: iload_1
+     129: invokevirtual #133                // Method java/lang/StringBuilder.append:(C)Ljava/lang/StringBuilder;
+     132: pop
+     133: aload_0
+     134: invokevirtual #101                // Method next:()C
+     137: istore_1
+     138: goto          112
+     141: aload_0
+     142: getfield      #24                 // Field eof:Z
+     145: ifne          152
+     148: aload_0
+     149: invokevirtual #157                // Method back:()V
+     152: aload_3
+     153: invokevirtual #153                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     156: invokevirtual #160                // Method java/lang/String.trim:()Ljava/lang/String;
+     159: astore_2
+     160: ldc           #116                // String
+     162: aload_2
+     163: invokevirtual #187                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     166: ifeq          176
+     169: aload_0
+     170: ldc           #191                // String Missing value
+     172: invokevirtual #109                // Method syntaxError:(Ljava/lang/String;)Lorg/json/JSONException;
+     175: athrow
+     176: aload_2
+     177: invokestatic  #193                // Method org/json/JSONObject.stringToValue:(Ljava/lang/String;)Ljava/lang/Object;
+     180: areturn
+    Exception table:
+       from    to  target type
+          58    66    67   Class java/lang/StackOverflowError
+          83    91    92   Class java/lang/StackOverflowError
+
+  public char skipTo(char) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: getfield      #35                 // Field index:J
+       4: lstore_3
+       5: aload_0
+       6: getfield      #39                 // Field character:J
+       9: lstore        5
+      11: aload_0
+      12: getfield      #45                 // Field line:J
+      15: lstore        7
+      17: aload_0
+      18: getfield      #18                 // Field reader:Ljava/io/Reader;
+      21: ldc           #197                // int 1000000
+      23: invokevirtual #75                 // Method java/io/Reader.mark:(I)V
+      26: aload_0
+      27: invokevirtual #101                // Method next:()C
+      30: istore_2
+      31: iload_2
+      32: ifne          61
+      35: aload_0
+      36: getfield      #18                 // Field reader:Ljava/io/Reader;
+      39: invokevirtual #90                 // Method java/io/Reader.reset:()V
+      42: aload_0
+      43: lload_3
+      44: putfield      #35                 // Field index:J
+      47: aload_0
+      48: lload         5
+      50: putfield      #39                 // Field character:J
+      53: aload_0
+      54: lload         7
+      56: putfield      #45                 // Field line:J
+      59: iconst_0
+      60: ireturn
+      61: iload_2
+      62: iload_1
+      63: if_icmpne     26
+      66: aload_0
+      67: getfield      #18                 // Field reader:Ljava/io/Reader;
+      70: iconst_1
+      71: invokevirtual #75                 // Method java/io/Reader.mark:(I)V
+      74: goto          87
+      77: astore_3
+      78: new           #67                 // class org/json/JSONException
+      81: dup
+      82: aload_3
+      83: invokespecial #95                 // Method org/json/JSONException."<init>":(Ljava/lang/Throwable;)V
+      86: athrow
+      87: aload_0
+      88: invokevirtual #157                // Method back:()V
+      91: iload_2
+      92: ireturn
+    Exception table:
+       from    to  target type
+           0    60    77   Class java/io/IOException
+          61    74    77   Class java/io/IOException
+
+  public org.json.JSONException syntaxError(java.lang.String);
+    Code:
+       0: new           #67                 // class org/json/JSONException
+       3: dup
+       4: aload_1
+       5: aload_0
+       6: invokevirtual #198                // Method toString:()Ljava/lang/String;
+       9: invokedynamic #199,  0            // InvokeDynamic #2:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      14: invokespecial #71                 // Method org/json/JSONException."<init>":(Ljava/lang/String;)V
+      17: areturn
+
+  public org.json.JSONException syntaxError(java.lang.String, java.lang.Throwable);
+    Code:
+       0: new           #67                 // class org/json/JSONException
+       3: dup
+       4: aload_1
+       5: aload_0
+       6: invokevirtual #198                // Method toString:()Ljava/lang/String;
+       9: invokedynamic #199,  0            // InvokeDynamic #2:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      14: aload_2
+      15: invokespecial #83                 // Method org/json/JSONException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+      18: areturn
+
+  public java.lang.String toString();
+    Code:
+       0: aload_0
+       1: getfield      #35                 // Field index:J
+       4: aload_0
+       5: getfield      #39                 // Field character:J
+       8: aload_0
+       9: getfield      #45                 // Field line:J
+      12: invokedynamic #202,  0            // InvokeDynamic #3:makeConcatWithConstants:(JJJ)Ljava/lang/String;
+      17: areturn
+
+  public void close() throws java.io.IOException;
+    Code:
+       0: aload_0
+       1: getfield      #18                 // Field reader:Ljava/io/Reader;
+       4: ifnull        14
+       7: aload_0
+       8: getfield      #18                 // Field reader:Ljava/io/Reader;
+      11: invokevirtual #205                // Method java/io/Reader.close:()V
+      14: return
+}

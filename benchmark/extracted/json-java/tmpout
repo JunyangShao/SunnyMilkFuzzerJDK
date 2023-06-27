@@ -1,0 +1,1754 @@
+Compiled from "JSONArray.java"
+public class org.json.JSONArray implements java.lang.Iterable<java.lang.Object> {
+  private final java.util.ArrayList<java.lang.Object> myArrayList;
+
+  public org.json.JSONArray();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: new           #7                  // class java/util/ArrayList
+       8: dup
+       9: invokespecial #9                  // Method java/util/ArrayList."<init>":()V
+      12: putfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      15: return
+
+  public org.json.JSONArray(org.json.JSONTokener) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: invokespecial #16                 // Method "<init>":()V
+       4: aload_1
+       5: invokevirtual #17                 // Method org/json/JSONTokener.nextClean:()C
+       8: bipush        91
+      10: if_icmpeq     20
+      13: aload_1
+      14: ldc           #23                 // String A JSONArray text must start with '['
+      16: invokevirtual #25                 // Method org/json/JSONTokener.syntaxError:(Ljava/lang/String;)Lorg/json/JSONException;
+      19: athrow
+      20: aload_1
+      21: invokevirtual #17                 // Method org/json/JSONTokener.nextClean:()C
+      24: istore_2
+      25: iload_2
+      26: ifne          36
+      29: aload_1
+      30: ldc           #29                 // String Expected a ',' or ']'
+      32: invokevirtual #25                 // Method org/json/JSONTokener.syntaxError:(Ljava/lang/String;)Lorg/json/JSONException;
+      35: athrow
+      36: iload_2
+      37: bipush        93
+      39: if_icmpeq     173
+      42: aload_1
+      43: invokevirtual #31                 // Method org/json/JSONTokener.back:()V
+      46: aload_1
+      47: invokevirtual #17                 // Method org/json/JSONTokener.nextClean:()C
+      50: bipush        44
+      52: if_icmpne     73
+      55: aload_1
+      56: invokevirtual #31                 // Method org/json/JSONTokener.back:()V
+      59: aload_0
+      60: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      63: getstatic     #34                 // Field org/json/JSONObject.NULL:Ljava/lang/Object;
+      66: invokevirtual #40                 // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      69: pop
+      70: goto          89
+      73: aload_1
+      74: invokevirtual #31                 // Method org/json/JSONTokener.back:()V
+      77: aload_0
+      78: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      81: aload_1
+      82: invokevirtual #44                 // Method org/json/JSONTokener.nextValue:()Ljava/lang/Object;
+      85: invokevirtual #40                 // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      88: pop
+      89: aload_1
+      90: invokevirtual #17                 // Method org/json/JSONTokener.nextClean:()C
+      93: lookupswitch  { // 3
+                     0: 128
+                    44: 135
+                    93: 165
+               default: 166
+          }
+     128: aload_1
+     129: ldc           #29                 // String Expected a ',' or ']'
+     131: invokevirtual #25                 // Method org/json/JSONTokener.syntaxError:(Ljava/lang/String;)Lorg/json/JSONException;
+     134: athrow
+     135: aload_1
+     136: invokevirtual #17                 // Method org/json/JSONTokener.nextClean:()C
+     139: istore_2
+     140: iload_2
+     141: ifne          151
+     144: aload_1
+     145: ldc           #29                 // String Expected a ',' or ']'
+     147: invokevirtual #25                 // Method org/json/JSONTokener.syntaxError:(Ljava/lang/String;)Lorg/json/JSONException;
+     150: athrow
+     151: iload_2
+     152: bipush        93
+     154: if_icmpne     158
+     157: return
+     158: aload_1
+     159: invokevirtual #31                 // Method org/json/JSONTokener.back:()V
+     162: goto          46
+     165: return
+     166: aload_1
+     167: ldc           #29                 // String Expected a ',' or ']'
+     169: invokevirtual #25                 // Method org/json/JSONTokener.syntaxError:(Ljava/lang/String;)Lorg/json/JSONException;
+     172: athrow
+     173: return
+
+  public org.json.JSONArray(java.lang.String) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: new           #18                 // class org/json/JSONTokener
+       4: dup
+       5: aload_1
+       6: invokespecial #48                 // Method org/json/JSONTokener."<init>":(Ljava/lang/String;)V
+       9: invokespecial #51                 // Method "<init>":(Lorg/json/JSONTokener;)V
+      12: return
+
+  public org.json.JSONArray(java.util.Collection<?>);
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: aload_1
+       5: ifnonnull     22
+       8: aload_0
+       9: new           #7                  // class java/util/ArrayList
+      12: dup
+      13: invokespecial #9                  // Method java/util/ArrayList."<init>":()V
+      16: putfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      19: goto          45
+      22: aload_0
+      23: new           #7                  // class java/util/ArrayList
+      26: dup
+      27: aload_1
+      28: invokeinterface #54,  1           // InterfaceMethod java/util/Collection.size:()I
+      33: invokespecial #60                 // Method java/util/ArrayList."<init>":(I)V
+      36: putfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      39: aload_0
+      40: aload_1
+      41: iconst_1
+      42: invokevirtual #63                 // Method addAll:(Ljava/util/Collection;Z)V
+      45: return
+
+  public org.json.JSONArray(java.lang.Iterable<?>);
+    Code:
+       0: aload_0
+       1: invokespecial #16                 // Method "<init>":()V
+       4: aload_1
+       5: ifnonnull     9
+       8: return
+       9: aload_0
+      10: aload_1
+      11: iconst_1
+      12: invokevirtual #67                 // Method addAll:(Ljava/lang/Iterable;Z)V
+      15: return
+
+  public org.json.JSONArray(org.json.JSONArray);
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: aload_1
+       5: ifnonnull     22
+       8: aload_0
+       9: new           #7                  // class java/util/ArrayList
+      12: dup
+      13: invokespecial #9                  // Method java/util/ArrayList."<init>":()V
+      16: putfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      19: goto          37
+      22: aload_0
+      23: new           #7                  // class java/util/ArrayList
+      26: dup
+      27: aload_1
+      28: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      31: invokespecial #70                 // Method java/util/ArrayList."<init>":(Ljava/util/Collection;)V
+      34: putfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      37: return
+
+  public org.json.JSONArray(java.lang.Object) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: invokespecial #16                 // Method "<init>":()V
+       4: aload_1
+       5: invokevirtual #73                 // Method java/lang/Object.getClass:()Ljava/lang/Class;
+       8: invokevirtual #77                 // Method java/lang/Class.isArray:()Z
+      11: ifne          24
+      14: new           #83                 // class org/json/JSONException
+      17: dup
+      18: ldc           #85                 // String JSONArray initial value should be a string or collection or array.
+      20: invokespecial #87                 // Method org/json/JSONException."<init>":(Ljava/lang/String;)V
+      23: athrow
+      24: aload_0
+      25: aload_1
+      26: iconst_1
+      27: invokevirtual #88                 // Method addAll:(Ljava/lang/Object;Z)V
+      30: return
+
+  public org.json.JSONArray(int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: iload_1
+       5: ifge          18
+       8: new           #83                 // class org/json/JSONException
+      11: dup
+      12: ldc           #91                 // String JSONArray initial capacity cannot be negative.
+      14: invokespecial #87                 // Method org/json/JSONException."<init>":(Ljava/lang/String;)V
+      17: athrow
+      18: aload_0
+      19: new           #7                  // class java/util/ArrayList
+      22: dup
+      23: iload_1
+      24: invokespecial #60                 // Method java/util/ArrayList."<init>":(I)V
+      27: putfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      30: return
+
+  public java.util.Iterator<java.lang.Object> iterator();
+    Code:
+       0: aload_0
+       1: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+       4: invokevirtual #93                 // Method java/util/ArrayList.iterator:()Ljava/util/Iterator;
+       7: areturn
+
+  public java.lang.Object get(int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #97                 // Method opt:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: ifnonnull     24
+      10: new           #83                 // class org/json/JSONException
+      13: dup
+      14: iload_1
+      15: invokedynamic #101,  0            // InvokeDynamic #0:makeConcatWithConstants:(I)Ljava/lang/String;
+      20: invokespecial #87                 // Method org/json/JSONException."<init>":(Ljava/lang/String;)V
+      23: athrow
+      24: aload_2
+      25: areturn
+
+  public boolean getBoolean(int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #105                // Method get:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: getstatic     #108                // Field java/lang/Boolean.FALSE:Ljava/lang/Boolean;
+      10: invokevirtual #114                // Method java/lang/Object.equals:(Ljava/lang/Object;)Z
+      13: ifne          35
+      16: aload_2
+      17: instanceof    #117                // class java/lang/String
+      20: ifeq          37
+      23: aload_2
+      24: checkcast     #117                // class java/lang/String
+      27: ldc           #119                // String false
+      29: invokevirtual #121                // Method java/lang/String.equalsIgnoreCase:(Ljava/lang/String;)Z
+      32: ifeq          37
+      35: iconst_0
+      36: ireturn
+      37: aload_2
+      38: getstatic     #125                // Field java/lang/Boolean.TRUE:Ljava/lang/Boolean;
+      41: invokevirtual #114                // Method java/lang/Object.equals:(Ljava/lang/Object;)Z
+      44: ifne          66
+      47: aload_2
+      48: instanceof    #117                // class java/lang/String
+      51: ifeq          68
+      54: aload_2
+      55: checkcast     #117                // class java/lang/String
+      58: ldc           #128                // String true
+      60: invokevirtual #121                // Method java/lang/String.equalsIgnoreCase:(Ljava/lang/String;)Z
+      63: ifeq          68
+      66: iconst_1
+      67: ireturn
+      68: iload_1
+      69: ldc           #130                // String boolean
+      71: aload_2
+      72: aconst_null
+      73: invokestatic  #132                // Method wrongValueFormatException:(ILjava/lang/String;Ljava/lang/Object;Ljava/lang/Throwable;)Lorg/json/JSONException;
+      76: athrow
+
+  public double getDouble(int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #105                // Method get:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: instanceof    #136                // class java/lang/Number
+      10: ifeq          21
+      13: aload_2
+      14: checkcast     #136                // class java/lang/Number
+      17: invokevirtual #138                // Method java/lang/Number.doubleValue:()D
+      20: dreturn
+      21: aload_2
+      22: invokevirtual #142                // Method java/lang/Object.toString:()Ljava/lang/String;
+      25: invokestatic  #146                // Method java/lang/Double.parseDouble:(Ljava/lang/String;)D
+      28: dreturn
+      29: astore_3
+      30: iload_1
+      31: ldc           #154                // String double
+      33: aload_2
+      34: aload_3
+      35: invokestatic  #132                // Method wrongValueFormatException:(ILjava/lang/String;Ljava/lang/Object;Ljava/lang/Throwable;)Lorg/json/JSONException;
+      38: athrow
+    Exception table:
+       from    to  target type
+          21    28    29   Class java/lang/Exception
+
+  public float getFloat(int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #105                // Method get:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: instanceof    #136                // class java/lang/Number
+      10: ifeq          21
+      13: aload_2
+      14: checkcast     #136                // class java/lang/Number
+      17: invokevirtual #156                // Method java/lang/Number.floatValue:()F
+      20: freturn
+      21: aload_2
+      22: invokevirtual #142                // Method java/lang/Object.toString:()Ljava/lang/String;
+      25: invokestatic  #160                // Method java/lang/Float.parseFloat:(Ljava/lang/String;)F
+      28: freturn
+      29: astore_3
+      30: iload_1
+      31: ldc           #166                // String float
+      33: aload_2
+      34: aload_3
+      35: invokestatic  #132                // Method wrongValueFormatException:(ILjava/lang/String;Ljava/lang/Object;Ljava/lang/Throwable;)Lorg/json/JSONException;
+      38: athrow
+    Exception table:
+       from    to  target type
+          21    28    29   Class java/lang/Exception
+
+  public java.lang.Number getNumber(int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #105                // Method get:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: instanceof    #136                // class java/lang/Number
+      10: ifeq          18
+      13: aload_2
+      14: checkcast     #136                // class java/lang/Number
+      17: areturn
+      18: aload_2
+      19: invokevirtual #142                // Method java/lang/Object.toString:()Ljava/lang/String;
+      22: invokestatic  #168                // Method org/json/JSONObject.stringToNumber:(Ljava/lang/String;)Ljava/lang/Number;
+      25: areturn
+      26: astore_3
+      27: iload_1
+      28: ldc           #172                // String number
+      30: aload_2
+      31: aload_3
+      32: invokestatic  #132                // Method wrongValueFormatException:(ILjava/lang/String;Ljava/lang/Object;Ljava/lang/Throwable;)Lorg/json/JSONException;
+      35: athrow
+    Exception table:
+       from    to  target type
+           6    17    26   Class java/lang/Exception
+          18    25    26   Class java/lang/Exception
+
+  public <E extends java.lang.Enum<E>> E getEnum(java.lang.Class<E>, int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iload_2
+       3: invokevirtual #174                // Method optEnum:(Ljava/lang/Class;I)Ljava/lang/Enum;
+       6: astore_3
+       7: aload_3
+       8: ifnonnull     34
+      11: iload_2
+      12: aload_1
+      13: invokevirtual #178                // Method java/lang/Class.getSimpleName:()Ljava/lang/String;
+      16: invokestatic  #181                // Method org/json/JSONObject.quote:(Ljava/lang/String;)Ljava/lang/String;
+      19: invokedynamic #185,  0            // InvokeDynamic #1:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      24: aload_0
+      25: iload_2
+      26: invokevirtual #97                 // Method opt:(I)Ljava/lang/Object;
+      29: aconst_null
+      30: invokestatic  #132                // Method wrongValueFormatException:(ILjava/lang/String;Ljava/lang/Object;Ljava/lang/Throwable;)Lorg/json/JSONException;
+      33: athrow
+      34: aload_3
+      35: areturn
+
+  public java.math.BigDecimal getBigDecimal(int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #105                // Method get:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: aconst_null
+       8: invokestatic  #187                // Method org/json/JSONObject.objectToBigDecimal:(Ljava/lang/Object;Ljava/math/BigDecimal;)Ljava/math/BigDecimal;
+      11: astore_3
+      12: aload_3
+      13: ifnonnull     25
+      16: iload_1
+      17: ldc           #191                // String BigDecimal
+      19: aload_2
+      20: aconst_null
+      21: invokestatic  #132                // Method wrongValueFormatException:(ILjava/lang/String;Ljava/lang/Object;Ljava/lang/Throwable;)Lorg/json/JSONException;
+      24: athrow
+      25: aload_3
+      26: areturn
+
+  public java.math.BigInteger getBigInteger(int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #105                // Method get:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: aconst_null
+       8: invokestatic  #193                // Method org/json/JSONObject.objectToBigInteger:(Ljava/lang/Object;Ljava/math/BigInteger;)Ljava/math/BigInteger;
+      11: astore_3
+      12: aload_3
+      13: ifnonnull     25
+      16: iload_1
+      17: ldc           #197                // String BigInteger
+      19: aload_2
+      20: aconst_null
+      21: invokestatic  #132                // Method wrongValueFormatException:(ILjava/lang/String;Ljava/lang/Object;Ljava/lang/Throwable;)Lorg/json/JSONException;
+      24: athrow
+      25: aload_3
+      26: areturn
+
+  public int getInt(int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #105                // Method get:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: instanceof    #136                // class java/lang/Number
+      10: ifeq          21
+      13: aload_2
+      14: checkcast     #136                // class java/lang/Number
+      17: invokevirtual #199                // Method java/lang/Number.intValue:()I
+      20: ireturn
+      21: aload_2
+      22: invokevirtual #142                // Method java/lang/Object.toString:()Ljava/lang/String;
+      25: invokestatic  #202                // Method java/lang/Integer.parseInt:(Ljava/lang/String;)I
+      28: ireturn
+      29: astore_3
+      30: iload_1
+      31: ldc           #208                // String int
+      33: aload_2
+      34: aload_3
+      35: invokestatic  #132                // Method wrongValueFormatException:(ILjava/lang/String;Ljava/lang/Object;Ljava/lang/Throwable;)Lorg/json/JSONException;
+      38: athrow
+    Exception table:
+       from    to  target type
+          21    28    29   Class java/lang/Exception
+
+  public org.json.JSONArray getJSONArray(int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #105                // Method get:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: instanceof    #11                 // class org/json/JSONArray
+      10: ifeq          18
+      13: aload_2
+      14: checkcast     #11                 // class org/json/JSONArray
+      17: areturn
+      18: iload_1
+      19: ldc           #210                // String JSONArray
+      21: aload_2
+      22: aconst_null
+      23: invokestatic  #132                // Method wrongValueFormatException:(ILjava/lang/String;Ljava/lang/Object;Ljava/lang/Throwable;)Lorg/json/JSONException;
+      26: athrow
+
+  public org.json.JSONObject getJSONObject(int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #105                // Method get:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: instanceof    #35                 // class org/json/JSONObject
+      10: ifeq          18
+      13: aload_2
+      14: checkcast     #35                 // class org/json/JSONObject
+      17: areturn
+      18: iload_1
+      19: ldc           #212                // String JSONObject
+      21: aload_2
+      22: aconst_null
+      23: invokestatic  #132                // Method wrongValueFormatException:(ILjava/lang/String;Ljava/lang/Object;Ljava/lang/Throwable;)Lorg/json/JSONException;
+      26: athrow
+
+  public long getLong(int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #105                // Method get:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: instanceof    #136                // class java/lang/Number
+      10: ifeq          21
+      13: aload_2
+      14: checkcast     #136                // class java/lang/Number
+      17: invokevirtual #214                // Method java/lang/Number.longValue:()J
+      20: lreturn
+      21: aload_2
+      22: invokevirtual #142                // Method java/lang/Object.toString:()Ljava/lang/String;
+      25: invokestatic  #218                // Method java/lang/Long.parseLong:(Ljava/lang/String;)J
+      28: lreturn
+      29: astore_3
+      30: iload_1
+      31: ldc           #224                // String long
+      33: aload_2
+      34: aload_3
+      35: invokestatic  #132                // Method wrongValueFormatException:(ILjava/lang/String;Ljava/lang/Object;Ljava/lang/Throwable;)Lorg/json/JSONException;
+      38: athrow
+    Exception table:
+       from    to  target type
+          21    28    29   Class java/lang/Exception
+
+  public java.lang.String getString(int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #105                // Method get:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: instanceof    #117                // class java/lang/String
+      10: ifeq          18
+      13: aload_2
+      14: checkcast     #117                // class java/lang/String
+      17: areturn
+      18: iload_1
+      19: ldc           #226                // String String
+      21: aload_2
+      22: aconst_null
+      23: invokestatic  #132                // Method wrongValueFormatException:(ILjava/lang/String;Ljava/lang/Object;Ljava/lang/Throwable;)Lorg/json/JSONException;
+      26: athrow
+
+  public boolean isNull(int);
+    Code:
+       0: getstatic     #34                 // Field org/json/JSONObject.NULL:Ljava/lang/Object;
+       3: aload_0
+       4: iload_1
+       5: invokevirtual #97                 // Method opt:(I)Ljava/lang/Object;
+       8: invokevirtual #114                // Method java/lang/Object.equals:(Ljava/lang/Object;)Z
+      11: ireturn
+
+  public java.lang.String join(java.lang.String) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: invokevirtual #228                // Method length:()I
+       4: istore_2
+       5: iload_2
+       6: ifne          12
+       9: ldc           #231                // String
+      11: areturn
+      12: new           #233                // class java/lang/StringBuilder
+      15: dup
+      16: aload_0
+      17: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      20: iconst_0
+      21: invokevirtual #235                // Method java/util/ArrayList.get:(I)Ljava/lang/Object;
+      24: invokestatic  #236                // Method org/json/JSONObject.valueToString:(Ljava/lang/Object;)Ljava/lang/String;
+      27: invokespecial #240                // Method java/lang/StringBuilder."<init>":(Ljava/lang/String;)V
+      30: astore_3
+      31: iconst_1
+      32: istore        4
+      34: iload         4
+      36: iload_2
+      37: if_icmpge     67
+      40: aload_3
+      41: aload_1
+      42: invokevirtual #241                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      45: aload_0
+      46: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      49: iload         4
+      51: invokevirtual #235                // Method java/util/ArrayList.get:(I)Ljava/lang/Object;
+      54: invokestatic  #236                // Method org/json/JSONObject.valueToString:(Ljava/lang/Object;)Ljava/lang/String;
+      57: invokevirtual #241                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      60: pop
+      61: iinc          4, 1
+      64: goto          34
+      67: aload_3
+      68: invokevirtual #245                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+      71: areturn
+
+  public int length();
+    Code:
+       0: aload_0
+       1: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+       4: invokevirtual #246                // Method java/util/ArrayList.size:()I
+       7: ireturn
+
+  public void clear();
+    Code:
+       0: aload_0
+       1: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+       4: invokevirtual #247                // Method java/util/ArrayList.clear:()V
+       7: return
+
+  public java.lang.Object opt(int);
+    Code:
+       0: iload_1
+       1: iflt          12
+       4: iload_1
+       5: aload_0
+       6: invokevirtual #228                // Method length:()I
+       9: if_icmplt     16
+      12: aconst_null
+      13: goto          24
+      16: aload_0
+      17: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      20: iload_1
+      21: invokevirtual #235                // Method java/util/ArrayList.get:(I)Ljava/lang/Object;
+      24: areturn
+
+  public boolean optBoolean(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: iconst_0
+       3: invokevirtual #250                // Method optBoolean:(IZ)Z
+       6: ireturn
+
+  public boolean optBoolean(int, boolean);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #254                // Method getBoolean:(I)Z
+       5: ireturn
+       6: astore_3
+       7: iload_2
+       8: ireturn
+    Exception table:
+       from    to  target type
+           0     5     6   Class java/lang/Exception
+
+  public double optDouble(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: ldc2_w        #258                // double NaNd
+       5: invokevirtual #260                // Method optDouble:(ID)D
+       8: dreturn
+
+  public double optDouble(int, double);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: aconst_null
+       3: invokevirtual #264                // Method optNumber:(ILjava/lang/Number;)Ljava/lang/Number;
+       6: astore        4
+       8: aload         4
+      10: ifnonnull     15
+      13: dload_2
+      14: dreturn
+      15: aload         4
+      17: invokevirtual #138                // Method java/lang/Number.doubleValue:()D
+      20: dstore        5
+      22: dload         5
+      24: dreturn
+
+  public float optFloat(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: ldc_w         #268                // float NaNf
+       5: invokevirtual #269                // Method optFloat:(IF)F
+       8: freturn
+
+  public float optFloat(int, float);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: aconst_null
+       3: invokevirtual #264                // Method optNumber:(ILjava/lang/Number;)Ljava/lang/Number;
+       6: astore_3
+       7: aload_3
+       8: ifnonnull     13
+      11: fload_2
+      12: freturn
+      13: aload_3
+      14: invokevirtual #156                // Method java/lang/Number.floatValue:()F
+      17: fstore        4
+      19: fload         4
+      21: freturn
+
+  public int optInt(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: iconst_0
+       3: invokevirtual #273                // Method optInt:(II)I
+       6: ireturn
+
+  public int optInt(int, int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: aconst_null
+       3: invokevirtual #264                // Method optNumber:(ILjava/lang/Number;)Ljava/lang/Number;
+       6: astore_3
+       7: aload_3
+       8: ifnonnull     13
+      11: iload_2
+      12: ireturn
+      13: aload_3
+      14: invokevirtual #199                // Method java/lang/Number.intValue:()I
+      17: ireturn
+
+  public <E extends java.lang.Enum<E>> E optEnum(java.lang.Class<E>, int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iload_2
+       3: aconst_null
+       4: invokevirtual #277                // Method optEnum:(Ljava/lang/Class;ILjava/lang/Enum;)Ljava/lang/Enum;
+       7: areturn
+
+  public <E extends java.lang.Enum<E>> E optEnum(java.lang.Class<E>, int, E);
+    Code:
+       0: aload_0
+       1: iload_2
+       2: invokevirtual #97                 // Method opt:(I)Ljava/lang/Object;
+       5: astore        4
+       7: getstatic     #34                 // Field org/json/JSONObject.NULL:Ljava/lang/Object;
+      10: aload         4
+      12: invokevirtual #114                // Method java/lang/Object.equals:(Ljava/lang/Object;)Z
+      15: ifeq          20
+      18: aload_3
+      19: areturn
+      20: aload_1
+      21: aload         4
+      23: invokevirtual #73                 // Method java/lang/Object.getClass:()Ljava/lang/Class;
+      26: invokevirtual #280                // Method java/lang/Class.isAssignableFrom:(Ljava/lang/Class;)Z
+      29: ifeq          42
+      32: aload         4
+      34: checkcast     #284                // class java/lang/Enum
+      37: astore        5
+      39: aload         5
+      41: areturn
+      42: aload_1
+      43: aload         4
+      45: invokevirtual #142                // Method java/lang/Object.toString:()Ljava/lang/String;
+      48: invokestatic  #286                // Method java/lang/Enum.valueOf:(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;
+      51: areturn
+      52: astore        4
+      54: aload_3
+      55: areturn
+      56: astore        4
+      58: aload_3
+      59: areturn
+    Exception table:
+       from    to  target type
+           0    19    52   Class java/lang/IllegalArgumentException
+          20    41    52   Class java/lang/IllegalArgumentException
+          42    51    52   Class java/lang/IllegalArgumentException
+           0    19    56   Class java/lang/NullPointerException
+          20    41    56   Class java/lang/NullPointerException
+          42    51    56   Class java/lang/NullPointerException
+
+  public java.math.BigInteger optBigInteger(int, java.math.BigInteger);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #97                 // Method opt:(I)Ljava/lang/Object;
+       5: astore_3
+       6: aload_3
+       7: aload_2
+       8: invokestatic  #193                // Method org/json/JSONObject.objectToBigInteger:(Ljava/lang/Object;Ljava/math/BigInteger;)Ljava/math/BigInteger;
+      11: areturn
+
+  public java.math.BigDecimal optBigDecimal(int, java.math.BigDecimal);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #97                 // Method opt:(I)Ljava/lang/Object;
+       5: astore_3
+       6: aload_3
+       7: aload_2
+       8: invokestatic  #187                // Method org/json/JSONObject.objectToBigDecimal:(Ljava/lang/Object;Ljava/math/BigDecimal;)Ljava/math/BigDecimal;
+      11: areturn
+
+  public org.json.JSONArray optJSONArray(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #97                 // Method opt:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: instanceof    #11                 // class org/json/JSONArray
+      10: ifeq          20
+      13: aload_2
+      14: checkcast     #11                 // class org/json/JSONArray
+      17: goto          21
+      20: aconst_null
+      21: areturn
+
+  public org.json.JSONObject optJSONObject(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #97                 // Method opt:(I)Ljava/lang/Object;
+       5: astore_2
+       6: aload_2
+       7: instanceof    #35                 // class org/json/JSONObject
+      10: ifeq          20
+      13: aload_2
+      14: checkcast     #35                 // class org/json/JSONObject
+      17: goto          21
+      20: aconst_null
+      21: areturn
+
+  public long optLong(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: lconst_0
+       3: invokevirtual #294                // Method optLong:(IJ)J
+       6: lreturn
+
+  public long optLong(int, long);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: aconst_null
+       3: invokevirtual #264                // Method optNumber:(ILjava/lang/Number;)Ljava/lang/Number;
+       6: astore        4
+       8: aload         4
+      10: ifnonnull     15
+      13: lload_2
+      14: lreturn
+      15: aload         4
+      17: invokevirtual #214                // Method java/lang/Number.longValue:()J
+      20: lreturn
+
+  public java.lang.Number optNumber(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: aconst_null
+       3: invokevirtual #264                // Method optNumber:(ILjava/lang/Number;)Ljava/lang/Number;
+       6: areturn
+
+  public java.lang.Number optNumber(int, java.lang.Number);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #97                 // Method opt:(I)Ljava/lang/Object;
+       5: astore_3
+       6: getstatic     #34                 // Field org/json/JSONObject.NULL:Ljava/lang/Object;
+       9: aload_3
+      10: invokevirtual #114                // Method java/lang/Object.equals:(Ljava/lang/Object;)Z
+      13: ifeq          18
+      16: aload_2
+      17: areturn
+      18: aload_3
+      19: instanceof    #136                // class java/lang/Number
+      22: ifeq          30
+      25: aload_3
+      26: checkcast     #136                // class java/lang/Number
+      29: areturn
+      30: aload_3
+      31: instanceof    #117                // class java/lang/String
+      34: ifeq          49
+      37: aload_3
+      38: checkcast     #117                // class java/lang/String
+      41: invokestatic  #168                // Method org/json/JSONObject.stringToNumber:(Ljava/lang/String;)Ljava/lang/Number;
+      44: areturn
+      45: astore        4
+      47: aload_2
+      48: areturn
+      49: aload_2
+      50: areturn
+    Exception table:
+       from    to  target type
+          37    44    45   Class java/lang/Exception
+
+  public java.lang.String optString(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: ldc           #231                // String
+       4: invokevirtual #298                // Method optString:(ILjava/lang/String;)Ljava/lang/String;
+       7: areturn
+
+  public java.lang.String optString(int, java.lang.String);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokevirtual #97                 // Method opt:(I)Ljava/lang/Object;
+       5: astore_3
+       6: getstatic     #34                 // Field org/json/JSONObject.NULL:Ljava/lang/Object;
+       9: aload_3
+      10: invokevirtual #114                // Method java/lang/Object.equals:(Ljava/lang/Object;)Z
+      13: ifeq          20
+      16: aload_2
+      17: goto          24
+      20: aload_3
+      21: invokevirtual #142                // Method java/lang/Object.toString:()Ljava/lang/String;
+      24: areturn
+
+  public org.json.JSONArray put(boolean);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: ifeq          11
+       5: getstatic     #125                // Field java/lang/Boolean.TRUE:Ljava/lang/Boolean;
+       8: goto          14
+      11: getstatic     #108                // Field java/lang/Boolean.FALSE:Ljava/lang/Boolean;
+      14: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+      17: areturn
+
+  public org.json.JSONArray put(java.util.Collection<?>);
+    Code:
+       0: aload_0
+       1: new           #11                 // class org/json/JSONArray
+       4: dup
+       5: aload_1
+       6: invokespecial #306                // Method "<init>":(Ljava/util/Collection;)V
+       9: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+      12: areturn
+
+  public org.json.JSONArray put(double) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: dload_1
+       2: invokestatic  #307                // Method java/lang/Double.valueOf:(D)Ljava/lang/Double;
+       5: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+       8: areturn
+
+  public org.json.JSONArray put(float) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: fload_1
+       2: invokestatic  #310                // Method java/lang/Float.valueOf:(F)Ljava/lang/Float;
+       5: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+       8: areturn
+
+  public org.json.JSONArray put(int);
+    Code:
+       0: aload_0
+       1: iload_1
+       2: invokestatic  #313                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+       5: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+       8: areturn
+
+  public org.json.JSONArray put(long);
+    Code:
+       0: aload_0
+       1: lload_1
+       2: invokestatic  #316                // Method java/lang/Long.valueOf:(J)Ljava/lang/Long;
+       5: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+       8: areturn
+
+  public org.json.JSONArray put(java.util.Map<?, ?>);
+    Code:
+       0: aload_0
+       1: new           #35                 // class org/json/JSONObject
+       4: dup
+       5: aload_1
+       6: invokespecial #319                // Method org/json/JSONObject."<init>":(Ljava/util/Map;)V
+       9: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+      12: areturn
+
+  public org.json.JSONArray put(java.lang.Object);
+    Code:
+       0: aload_1
+       1: invokestatic  #322                // Method org/json/JSONObject.testValidity:(Ljava/lang/Object;)V
+       4: aload_0
+       5: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+       8: aload_1
+       9: invokevirtual #40                 // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      12: pop
+      13: aload_0
+      14: areturn
+
+  public org.json.JSONArray put(int, boolean) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: iload_2
+       3: ifeq          12
+       6: getstatic     #125                // Field java/lang/Boolean.TRUE:Ljava/lang/Boolean;
+       9: goto          15
+      12: getstatic     #108                // Field java/lang/Boolean.FALSE:Ljava/lang/Boolean;
+      15: invokevirtual #326                // Method put:(ILjava/lang/Object;)Lorg/json/JSONArray;
+      18: areturn
+
+  public org.json.JSONArray put(int, java.util.Collection<?>) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: new           #11                 // class org/json/JSONArray
+       5: dup
+       6: aload_2
+       7: invokespecial #306                // Method "<init>":(Ljava/util/Collection;)V
+      10: invokevirtual #326                // Method put:(ILjava/lang/Object;)Lorg/json/JSONArray;
+      13: areturn
+
+  public org.json.JSONArray put(int, double) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: dload_2
+       3: invokestatic  #307                // Method java/lang/Double.valueOf:(D)Ljava/lang/Double;
+       6: invokevirtual #326                // Method put:(ILjava/lang/Object;)Lorg/json/JSONArray;
+       9: areturn
+
+  public org.json.JSONArray put(int, float) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: fload_2
+       3: invokestatic  #310                // Method java/lang/Float.valueOf:(F)Ljava/lang/Float;
+       6: invokevirtual #326                // Method put:(ILjava/lang/Object;)Lorg/json/JSONArray;
+       9: areturn
+
+  public org.json.JSONArray put(int, int) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: iload_2
+       3: invokestatic  #313                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+       6: invokevirtual #326                // Method put:(ILjava/lang/Object;)Lorg/json/JSONArray;
+       9: areturn
+
+  public org.json.JSONArray put(int, long) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: lload_2
+       3: invokestatic  #316                // Method java/lang/Long.valueOf:(J)Ljava/lang/Long;
+       6: invokevirtual #326                // Method put:(ILjava/lang/Object;)Lorg/json/JSONArray;
+       9: areturn
+
+  public org.json.JSONArray put(int, java.util.Map<?, ?>) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: iload_1
+       2: new           #35                 // class org/json/JSONObject
+       5: dup
+       6: aload_2
+       7: invokespecial #319                // Method org/json/JSONObject."<init>":(Ljava/util/Map;)V
+      10: invokevirtual #326                // Method put:(ILjava/lang/Object;)Lorg/json/JSONArray;
+      13: pop
+      14: aload_0
+      15: areturn
+
+  public org.json.JSONArray put(int, java.lang.Object) throws org.json.JSONException;
+    Code:
+       0: iload_1
+       1: ifge          18
+       4: new           #83                 // class org/json/JSONException
+       7: dup
+       8: iload_1
+       9: invokedynamic #101,  0            // InvokeDynamic #0:makeConcatWithConstants:(I)Ljava/lang/String;
+      14: invokespecial #87                 // Method org/json/JSONException."<init>":(Ljava/lang/String;)V
+      17: athrow
+      18: iload_1
+      19: aload_0
+      20: invokevirtual #228                // Method length:()I
+      23: if_icmpge     42
+      26: aload_2
+      27: invokestatic  #322                // Method org/json/JSONObject.testValidity:(Ljava/lang/Object;)V
+      30: aload_0
+      31: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      34: iload_1
+      35: aload_2
+      36: invokevirtual #329                // Method java/util/ArrayList.set:(ILjava/lang/Object;)Ljava/lang/Object;
+      39: pop
+      40: aload_0
+      41: areturn
+      42: iload_1
+      43: aload_0
+      44: invokevirtual #228                // Method length:()I
+      47: if_icmpne     56
+      50: aload_0
+      51: aload_2
+      52: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+      55: areturn
+      56: aload_0
+      57: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      60: iload_1
+      61: iconst_1
+      62: iadd
+      63: invokevirtual #333                // Method java/util/ArrayList.ensureCapacity:(I)V
+      66: iload_1
+      67: aload_0
+      68: invokevirtual #228                // Method length:()I
+      71: if_icmpeq     88
+      74: aload_0
+      75: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      78: getstatic     #34                 // Field org/json/JSONObject.NULL:Ljava/lang/Object;
+      81: invokevirtual #40                 // Method java/util/ArrayList.add:(Ljava/lang/Object;)Z
+      84: pop
+      85: goto          66
+      88: aload_0
+      89: aload_2
+      90: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+      93: areturn
+
+  public org.json.JSONArray putAll(java.util.Collection<?>);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iconst_0
+       3: invokevirtual #63                 // Method addAll:(Ljava/util/Collection;Z)V
+       6: aload_0
+       7: areturn
+
+  public org.json.JSONArray putAll(java.lang.Iterable<?>);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iconst_0
+       3: invokevirtual #67                 // Method addAll:(Ljava/lang/Iterable;Z)V
+       6: aload_0
+       7: areturn
+
+  public org.json.JSONArray putAll(org.json.JSONArray);
+    Code:
+       0: aload_0
+       1: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+       4: aload_1
+       5: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+       8: invokevirtual #336                // Method java/util/ArrayList.addAll:(Ljava/util/Collection;)Z
+      11: pop
+      12: aload_0
+      13: areturn
+
+  public org.json.JSONArray putAll(java.lang.Object) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iconst_0
+       3: invokevirtual #88                 // Method addAll:(Ljava/lang/Object;Z)V
+       6: aload_0
+       7: areturn
+
+  public java.lang.Object query(java.lang.String);
+    Code:
+       0: aload_0
+       1: new           #339                // class org/json/JSONPointer
+       4: dup
+       5: aload_1
+       6: invokespecial #341                // Method org/json/JSONPointer."<init>":(Ljava/lang/String;)V
+       9: invokevirtual #342                // Method query:(Lorg/json/JSONPointer;)Ljava/lang/Object;
+      12: areturn
+
+  public java.lang.Object query(org.json.JSONPointer);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: invokevirtual #346                // Method org/json/JSONPointer.queryFrom:(Ljava/lang/Object;)Ljava/lang/Object;
+       5: areturn
+
+  public java.lang.Object optQuery(java.lang.String);
+    Code:
+       0: aload_0
+       1: new           #339                // class org/json/JSONPointer
+       4: dup
+       5: aload_1
+       6: invokespecial #341                // Method org/json/JSONPointer."<init>":(Ljava/lang/String;)V
+       9: invokevirtual #350                // Method optQuery:(Lorg/json/JSONPointer;)Ljava/lang/Object;
+      12: areturn
+
+  public java.lang.Object optQuery(org.json.JSONPointer);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: invokevirtual #346                // Method org/json/JSONPointer.queryFrom:(Ljava/lang/Object;)Ljava/lang/Object;
+       5: areturn
+       6: astore_2
+       7: aconst_null
+       8: areturn
+    Exception table:
+       from    to  target type
+           0     5     6   Class org/json/JSONPointerException
+
+  public java.lang.Object remove(int);
+    Code:
+       0: iload_1
+       1: iflt          23
+       4: iload_1
+       5: aload_0
+       6: invokevirtual #228                // Method length:()I
+       9: if_icmpge     23
+      12: aload_0
+      13: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      16: iload_1
+      17: invokevirtual #355                // Method java/util/ArrayList.remove:(I)Ljava/lang/Object;
+      20: goto          24
+      23: aconst_null
+      24: areturn
+
+  public boolean similar(java.lang.Object);
+    Code:
+       0: aload_1
+       1: instanceof    #11                 // class org/json/JSONArray
+       4: ifne          9
+       7: iconst_0
+       8: ireturn
+       9: aload_0
+      10: invokevirtual #228                // Method length:()I
+      13: istore_2
+      14: iload_2
+      15: aload_1
+      16: checkcast     #11                 // class org/json/JSONArray
+      19: invokevirtual #228                // Method length:()I
+      22: if_icmpeq     27
+      25: iconst_0
+      26: ireturn
+      27: iconst_0
+      28: istore_3
+      29: iload_3
+      30: iload_2
+      31: if_icmpge     216
+      34: aload_0
+      35: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      38: iload_3
+      39: invokevirtual #235                // Method java/util/ArrayList.get:(I)Ljava/lang/Object;
+      42: astore        4
+      44: aload_1
+      45: checkcast     #11                 // class org/json/JSONArray
+      48: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      51: iload_3
+      52: invokevirtual #235                // Method java/util/ArrayList.get:(I)Ljava/lang/Object;
+      55: astore        5
+      57: aload         4
+      59: aload         5
+      61: if_acmpne     67
+      64: goto          210
+      67: aload         4
+      69: ifnonnull     74
+      72: iconst_0
+      73: ireturn
+      74: aload         4
+      76: instanceof    #35                 // class org/json/JSONObject
+      79: ifeq          97
+      82: aload         4
+      84: checkcast     #35                 // class org/json/JSONObject
+      87: aload         5
+      89: invokevirtual #358                // Method org/json/JSONObject.similar:(Ljava/lang/Object;)Z
+      92: ifne          210
+      95: iconst_0
+      96: ireturn
+      97: aload         4
+      99: instanceof    #11                 // class org/json/JSONArray
+     102: ifeq          120
+     105: aload         4
+     107: checkcast     #11                 // class org/json/JSONArray
+     110: aload         5
+     112: invokevirtual #361                // Method similar:(Ljava/lang/Object;)Z
+     115: ifne          210
+     118: iconst_0
+     119: ireturn
+     120: aload         4
+     122: instanceof    #136                // class java/lang/Number
+     125: ifeq          154
+     128: aload         5
+     130: instanceof    #136                // class java/lang/Number
+     133: ifeq          154
+     136: aload         4
+     138: checkcast     #136                // class java/lang/Number
+     141: aload         5
+     143: checkcast     #136                // class java/lang/Number
+     146: invokestatic  #362                // Method org/json/JSONObject.isNumberSimilar:(Ljava/lang/Number;Ljava/lang/Number;)Z
+     149: ifne          210
+     152: iconst_0
+     153: ireturn
+     154: aload         4
+     156: instanceof    #366                // class org/json/JSONString
+     159: ifeq          198
+     162: aload         5
+     164: instanceof    #366                // class org/json/JSONString
+     167: ifeq          198
+     170: aload         4
+     172: checkcast     #366                // class org/json/JSONString
+     175: invokeinterface #368,  1          // InterfaceMethod org/json/JSONString.toJSONString:()Ljava/lang/String;
+     180: aload         5
+     182: checkcast     #366                // class org/json/JSONString
+     185: invokeinterface #368,  1          // InterfaceMethod org/json/JSONString.toJSONString:()Ljava/lang/String;
+     190: invokevirtual #371                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     193: ifne          210
+     196: iconst_0
+     197: ireturn
+     198: aload         4
+     200: aload         5
+     202: invokevirtual #114                // Method java/lang/Object.equals:(Ljava/lang/Object;)Z
+     205: ifne          210
+     208: iconst_0
+     209: ireturn
+     210: iinc          3, 1
+     213: goto          29
+     216: iconst_1
+     217: ireturn
+
+  public org.json.JSONObject toJSONObject(org.json.JSONArray) throws org.json.JSONException;
+    Code:
+       0: aload_1
+       1: ifnull        18
+       4: aload_1
+       5: invokevirtual #372                // Method isEmpty:()Z
+       8: ifne          18
+      11: aload_0
+      12: invokevirtual #372                // Method isEmpty:()Z
+      15: ifeq          20
+      18: aconst_null
+      19: areturn
+      20: new           #35                 // class org/json/JSONObject
+      23: dup
+      24: aload_1
+      25: invokevirtual #228                // Method length:()I
+      28: invokespecial #375                // Method org/json/JSONObject."<init>":(I)V
+      31: astore_2
+      32: iconst_0
+      33: istore_3
+      34: iload_3
+      35: aload_1
+      36: invokevirtual #228                // Method length:()I
+      39: if_icmpge     63
+      42: aload_2
+      43: aload_1
+      44: iload_3
+      45: invokevirtual #376                // Method getString:(I)Ljava/lang/String;
+      48: aload_0
+      49: iload_3
+      50: invokevirtual #97                 // Method opt:(I)Ljava/lang/Object;
+      53: invokevirtual #379                // Method org/json/JSONObject.put:(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;
+      56: pop
+      57: iinc          3, 1
+      60: goto          34
+      63: aload_2
+      64: areturn
+
+  public java.lang.String toString();
+    Code:
+       0: aload_0
+       1: iconst_0
+       2: invokevirtual #382                // Method toString:(I)Ljava/lang/String;
+       5: areturn
+       6: astore_1
+       7: aconst_null
+       8: areturn
+    Exception table:
+       from    to  target type
+           0     5     6   Class java/lang/Exception
+
+  public java.lang.String toString(int) throws org.json.JSONException;
+    Code:
+       0: new           #384                // class java/io/StringWriter
+       3: dup
+       4: invokespecial #386                // Method java/io/StringWriter."<init>":()V
+       7: astore_2
+       8: aload_2
+       9: invokevirtual #387                // Method java/io/StringWriter.getBuffer:()Ljava/lang/StringBuffer;
+      12: dup
+      13: astore_3
+      14: monitorenter
+      15: aload_0
+      16: aload_2
+      17: iload_1
+      18: iconst_0
+      19: invokevirtual #391                // Method write:(Ljava/io/Writer;II)Ljava/io/Writer;
+      22: invokevirtual #142                // Method java/lang/Object.toString:()Ljava/lang/String;
+      25: aload_3
+      26: monitorexit
+      27: areturn
+      28: astore        4
+      30: aload_3
+      31: monitorexit
+      32: aload         4
+      34: athrow
+    Exception table:
+       from    to  target type
+          15    27    28   any
+          28    32    28   any
+
+  public java.io.Writer write(java.io.Writer) throws org.json.JSONException;
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iconst_0
+       3: iconst_0
+       4: invokevirtual #391                // Method write:(Ljava/io/Writer;II)Ljava/io/Writer;
+       7: areturn
+
+  public java.io.Writer write(java.io.Writer, int, int) throws org.json.JSONException;
+    Code:
+       0: iconst_0
+       1: istore        4
+       3: aload_0
+       4: invokevirtual #228                // Method length:()I
+       7: istore        5
+       9: aload_1
+      10: bipush        91
+      12: invokevirtual #395                // Method java/io/Writer.write:(I)V
+      15: iload         5
+      17: iconst_1
+      18: if_icmpne     54
+      21: aload_1
+      22: aload_0
+      23: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      26: iconst_0
+      27: invokevirtual #235                // Method java/util/ArrayList.get:(I)Ljava/lang/Object;
+      30: iload_2
+      31: iload_3
+      32: invokestatic  #399                // Method org/json/JSONObject.writeValue:(Ljava/io/Writer;Ljava/lang/Object;II)Ljava/io/Writer;
+      35: pop
+      36: goto          164
+      39: astore        6
+      41: new           #83                 // class org/json/JSONException
+      44: dup
+      45: ldc_w         #403                // String Unable to write JSONArray value at index: 0
+      48: aload         6
+      50: invokespecial #405                // Method org/json/JSONException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+      53: athrow
+      54: iload         5
+      56: ifeq          164
+      59: iload_3
+      60: iload_2
+      61: iadd
+      62: istore        6
+      64: iconst_0
+      65: istore        7
+      67: iload         7
+      69: iload         5
+      71: if_icmpge     149
+      74: iload         4
+      76: ifeq          85
+      79: aload_1
+      80: bipush        44
+      82: invokevirtual #395                // Method java/io/Writer.write:(I)V
+      85: iload_2
+      86: ifle          95
+      89: aload_1
+      90: bipush        10
+      92: invokevirtual #395                // Method java/io/Writer.write:(I)V
+      95: aload_1
+      96: iload         6
+      98: invokestatic  #408                // Method org/json/JSONObject.indent:(Ljava/io/Writer;I)V
+     101: aload_1
+     102: aload_0
+     103: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+     106: iload         7
+     108: invokevirtual #235                // Method java/util/ArrayList.get:(I)Ljava/lang/Object;
+     111: iload_2
+     112: iload         6
+     114: invokestatic  #399                // Method org/json/JSONObject.writeValue:(Ljava/io/Writer;Ljava/lang/Object;II)Ljava/io/Writer;
+     117: pop
+     118: goto          140
+     121: astore        8
+     123: new           #83                 // class org/json/JSONException
+     126: dup
+     127: iload         7
+     129: invokedynamic #412,  0            // InvokeDynamic #2:makeConcatWithConstants:(I)Ljava/lang/String;
+     134: aload         8
+     136: invokespecial #405                // Method org/json/JSONException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+     139: athrow
+     140: iconst_1
+     141: istore        4
+     143: iinc          7, 1
+     146: goto          67
+     149: iload_2
+     150: ifle          159
+     153: aload_1
+     154: bipush        10
+     156: invokevirtual #395                // Method java/io/Writer.write:(I)V
+     159: aload_1
+     160: iload_3
+     161: invokestatic  #408                // Method org/json/JSONObject.indent:(Ljava/io/Writer;I)V
+     164: aload_1
+     165: bipush        93
+     167: invokevirtual #395                // Method java/io/Writer.write:(I)V
+     170: aload_1
+     171: areturn
+     172: astore        4
+     174: new           #83                 // class org/json/JSONException
+     177: dup
+     178: aload         4
+     180: invokespecial #415                // Method org/json/JSONException."<init>":(Ljava/lang/Throwable;)V
+     183: athrow
+    Exception table:
+       from    to  target type
+          21    36    39   Class java/lang/Exception
+         101   118   121   Class java/lang/Exception
+           0   171   172   Class java/io/IOException
+
+  public java.util.List<java.lang.Object> toList();
+    Code:
+       0: new           #7                  // class java/util/ArrayList
+       3: dup
+       4: aload_0
+       5: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+       8: invokevirtual #246                // Method java/util/ArrayList.size:()I
+      11: invokespecial #60                 // Method java/util/ArrayList."<init>":(I)V
+      14: astore_1
+      15: aload_0
+      16: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      19: invokevirtual #93                 // Method java/util/ArrayList.iterator:()Ljava/util/Iterator;
+      22: astore_2
+      23: aload_2
+      24: invokeinterface #418,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      29: ifeq          123
+      32: aload_2
+      33: invokeinterface #423,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      38: astore_3
+      39: aload_3
+      40: ifnull        53
+      43: getstatic     #34                 // Field org/json/JSONObject.NULL:Ljava/lang/Object;
+      46: aload_3
+      47: invokevirtual #114                // Method java/lang/Object.equals:(Ljava/lang/Object;)Z
+      50: ifeq          64
+      53: aload_1
+      54: aconst_null
+      55: invokeinterface #426,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+      60: pop
+      61: goto          120
+      64: aload_3
+      65: instanceof    #11                 // class org/json/JSONArray
+      68: ifeq          88
+      71: aload_1
+      72: aload_3
+      73: checkcast     #11                 // class org/json/JSONArray
+      76: invokevirtual #429                // Method toList:()Ljava/util/List;
+      79: invokeinterface #426,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+      84: pop
+      85: goto          120
+      88: aload_3
+      89: instanceof    #35                 // class org/json/JSONObject
+      92: ifeq          112
+      95: aload_1
+      96: aload_3
+      97: checkcast     #35                 // class org/json/JSONObject
+     100: invokevirtual #433                // Method org/json/JSONObject.toMap:()Ljava/util/Map;
+     103: invokeinterface #426,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+     108: pop
+     109: goto          120
+     112: aload_1
+     113: aload_3
+     114: invokeinterface #426,  2          // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+     119: pop
+     120: goto          23
+     123: aload_1
+     124: areturn
+
+  public boolean isEmpty();
+    Code:
+       0: aload_0
+       1: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+       4: invokevirtual #437                // Method java/util/ArrayList.isEmpty:()Z
+       7: ireturn
+
+  private void addAll(java.util.Collection<?>, boolean);
+    Code:
+       0: aload_0
+       1: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+       4: aload_0
+       5: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+       8: invokevirtual #246                // Method java/util/ArrayList.size:()I
+      11: aload_1
+      12: invokeinterface #54,  1           // InterfaceMethod java/util/Collection.size:()I
+      17: iadd
+      18: invokevirtual #333                // Method java/util/ArrayList.ensureCapacity:(I)V
+      21: iload_2
+      22: ifeq          65
+      25: aload_1
+      26: invokeinterface #438,  1          // InterfaceMethod java/util/Collection.iterator:()Ljava/util/Iterator;
+      31: astore_3
+      32: aload_3
+      33: invokeinterface #418,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      38: ifeq          62
+      41: aload_3
+      42: invokeinterface #423,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      47: astore        4
+      49: aload_0
+      50: aload         4
+      52: invokestatic  #439                // Method org/json/JSONObject.wrap:(Ljava/lang/Object;)Ljava/lang/Object;
+      55: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+      58: pop
+      59: goto          32
+      62: goto          99
+      65: aload_1
+      66: invokeinterface #438,  1          // InterfaceMethod java/util/Collection.iterator:()Ljava/util/Iterator;
+      71: astore_3
+      72: aload_3
+      73: invokeinterface #418,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      78: ifeq          99
+      81: aload_3
+      82: invokeinterface #423,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      87: astore        4
+      89: aload_0
+      90: aload         4
+      92: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+      95: pop
+      96: goto          72
+      99: return
+
+  private void addAll(java.lang.Iterable<?>, boolean);
+    Code:
+       0: iload_2
+       1: ifeq          44
+       4: aload_1
+       5: invokeinterface #442,  1          // InterfaceMethod java/lang/Iterable.iterator:()Ljava/util/Iterator;
+      10: astore_3
+      11: aload_3
+      12: invokeinterface #418,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      17: ifeq          41
+      20: aload_3
+      21: invokeinterface #423,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      26: astore        4
+      28: aload_0
+      29: aload         4
+      31: invokestatic  #439                // Method org/json/JSONObject.wrap:(Ljava/lang/Object;)Ljava/lang/Object;
+      34: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+      37: pop
+      38: goto          11
+      41: goto          78
+      44: aload_1
+      45: invokeinterface #442,  1          // InterfaceMethod java/lang/Iterable.iterator:()Ljava/util/Iterator;
+      50: astore_3
+      51: aload_3
+      52: invokeinterface #418,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      57: ifeq          78
+      60: aload_3
+      61: invokeinterface #423,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      66: astore        4
+      68: aload_0
+      69: aload         4
+      71: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+      74: pop
+      75: goto          51
+      78: return
+
+  private void addAll(java.lang.Object, boolean) throws org.json.JSONException;
+    Code:
+       0: aload_1
+       1: invokevirtual #73                 // Method java/lang/Object.getClass:()Ljava/lang/Class;
+       4: invokevirtual #77                 // Method java/lang/Class.isArray:()Z
+       7: ifeq          96
+      10: aload_1
+      11: invokestatic  #445                // Method java/lang/reflect/Array.getLength:(Ljava/lang/Object;)I
+      14: istore_3
+      15: aload_0
+      16: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      19: aload_0
+      20: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+      23: invokevirtual #246                // Method java/util/ArrayList.size:()I
+      26: iload_3
+      27: iadd
+      28: invokevirtual #333                // Method java/util/ArrayList.ensureCapacity:(I)V
+      31: iload_2
+      32: ifeq          67
+      35: iconst_0
+      36: istore        4
+      38: iload         4
+      40: iload_3
+      41: if_icmpge     64
+      44: aload_0
+      45: aload_1
+      46: iload         4
+      48: invokestatic  #451                // Method java/lang/reflect/Array.get:(Ljava/lang/Object;I)Ljava/lang/Object;
+      51: invokestatic  #439                // Method org/json/JSONObject.wrap:(Ljava/lang/Object;)Ljava/lang/Object;
+      54: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+      57: pop
+      58: iinc          4, 1
+      61: goto          38
+      64: goto          93
+      67: iconst_0
+      68: istore        4
+      70: iload         4
+      72: iload_3
+      73: if_icmpge     93
+      76: aload_0
+      77: aload_1
+      78: iload         4
+      80: invokestatic  #451                // Method java/lang/reflect/Array.get:(Ljava/lang/Object;I)Ljava/lang/Object;
+      83: invokevirtual #302                // Method put:(Ljava/lang/Object;)Lorg/json/JSONArray;
+      86: pop
+      87: iinc          4, 1
+      90: goto          70
+      93: goto          169
+      96: aload_1
+      97: instanceof    #11                 // class org/json/JSONArray
+     100: ifeq          121
+     103: aload_0
+     104: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+     107: aload_1
+     108: checkcast     #11                 // class org/json/JSONArray
+     111: getfield      #10                 // Field myArrayList:Ljava/util/ArrayList;
+     114: invokevirtual #336                // Method java/util/ArrayList.addAll:(Ljava/util/Collection;)Z
+     117: pop
+     118: goto          169
+     121: aload_1
+     122: instanceof    #55                 // class java/util/Collection
+     125: ifeq          140
+     128: aload_0
+     129: aload_1
+     130: checkcast     #55                 // class java/util/Collection
+     133: iload_2
+     134: invokevirtual #63                 // Method addAll:(Ljava/util/Collection;Z)V
+     137: goto          169
+     140: aload_1
+     141: instanceof    #443                // class java/lang/Iterable
+     144: ifeq          159
+     147: aload_0
+     148: aload_1
+     149: checkcast     #443                // class java/lang/Iterable
+     152: iload_2
+     153: invokevirtual #67                 // Method addAll:(Ljava/lang/Iterable;Z)V
+     156: goto          169
+     159: new           #83                 // class org/json/JSONException
+     162: dup
+     163: ldc           #85                 // String JSONArray initial value should be a string or collection or array.
+     165: invokespecial #87                 // Method org/json/JSONException."<init>":(Ljava/lang/String;)V
+     168: athrow
+     169: return
+
+  private static org.json.JSONException wrongValueFormatException(int, java.lang.String, java.lang.Object, java.lang.Throwable);
+    Code:
+       0: aload_2
+       1: ifnonnull     20
+       4: new           #83                 // class org/json/JSONException
+       7: dup
+       8: iload_0
+       9: aload_1
+      10: invokedynamic #454,  0            // InvokeDynamic #3:makeConcatWithConstants:(ILjava/lang/String;)Ljava/lang/String;
+      15: aload_3
+      16: invokespecial #405                // Method org/json/JSONException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+      19: areturn
+      20: aload_2
+      21: instanceof    #456                // class java/util/Map
+      24: ifne          41
+      27: aload_2
+      28: instanceof    #443                // class java/lang/Iterable
+      31: ifne          41
+      34: aload_2
+      35: instanceof    #35                 // class org/json/JSONObject
+      38: ifeq          61
+      41: new           #83                 // class org/json/JSONException
+      44: dup
+      45: iload_0
+      46: aload_1
+      47: aload_2
+      48: invokevirtual #73                 // Method java/lang/Object.getClass:()Ljava/lang/Class;
+      51: invokedynamic #458,  0            // InvokeDynamic #4:makeConcatWithConstants:(ILjava/lang/String;Ljava/lang/Class;)Ljava/lang/String;
+      56: aload_3
+      57: invokespecial #405                // Method org/json/JSONException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+      60: areturn
+      61: new           #83                 // class org/json/JSONException
+      64: dup
+      65: iload_0
+      66: aload_1
+      67: aload_2
+      68: invokevirtual #73                 // Method java/lang/Object.getClass:()Ljava/lang/Class;
+      71: aload_2
+      72: invokedynamic #461,  0            // InvokeDynamic #5:makeConcatWithConstants:(ILjava/lang/String;Ljava/lang/Class;Ljava/lang/Object;)Ljava/lang/String;
+      77: aload_3
+      78: invokespecial #405                // Method org/json/JSONException."<init>":(Ljava/lang/String;Ljava/lang/Throwable;)V
+      81: areturn
+}

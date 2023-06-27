@@ -1,0 +1,229 @@
+0 fast_aload_0
+1 invokespecial 29 <org/json/JSONArray.<init>()V> 
+  0   bci: 1    CounterData         count(2)
+4 sipush 969
+7 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  16  bci: 7    CounterData         count(2)
+10 aload_1
+11 invokevirtual 35 <org/json/JSONTokener.nextClean()C> 
+  32  bci: 11   VirtualCallData     count(0) nonprofiled_count(0) entries(1)
+                                    'org/json/JSONTokener'(2 1.00)
+14 bipush 91
+16 if_icmpeq 38
+  88  bci: 16   BranchData          taken(2) displacement(120)
+                                    not taken(0)
+
+---------------------- BB Boundary ----------------------
+
+19 sipush 970
+22 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  120 bci: 22   CounterData         count(0)
+25 aload_1
+26 fast_aldc A JSONArray text must start with '['
+28 invokevirtual 41 <org/json/JSONTokener.syntaxError(Ljava/lang/String;)Lorg/json/JSONException;> 
+  136 bci: 28   VirtualCallData     count(0) nonprofiled_count(0) entries(0)
+31 sipush 971
+34 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  192 bci: 34   CounterData         count(0)
+37 athrow
+
+---------------------- BB Boundary ----------------------
+
+38 aload_1
+39 invokevirtual 35 <org/json/JSONTokener.nextClean()C> 
+  208 bci: 39   VirtualCallData     count(0) nonprofiled_count(0) entries(1)
+                                    'org/json/JSONTokener'(2 1.00)
+42 istore_2
+43 iload_2
+44 ifne 66
+  264 bci: 44   BranchData          taken(2) displacement(120)
+                                    not taken(0)
+
+---------------------- BB Boundary ----------------------
+
+47 sipush 972
+50 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  296 bci: 50   CounterData         count(0)
+53 aload_1
+54 fast_aldc Expected a ',' or ']'
+56 invokevirtual 41 <org/json/JSONTokener.syntaxError(Ljava/lang/String;)Lorg/json/JSONException;> 
+  312 bci: 56   VirtualCallData     count(0) nonprofiled_count(0) entries(0)
+59 sipush 973
+62 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  368 bci: 62   CounterData         count(0)
+65 athrow
+
+---------------------- BB Boundary ----------------------
+
+66 iload_2
+67 bipush 93
+69 if_icmpeq 287
+  384 bci: 69   BranchData          taken(0) displacement(1208)
+                                    not taken(2)
+
+---------------------- BB Boundary ----------------------
+
+72 sipush 974
+75 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  416 bci: 75   CounterData         count(2)
+78 aload_1
+79 invokevirtual 46 <org/json/JSONTokener.back()V> 
+  432 bci: 79   VirtualCallData     count(0) nonprofiled_count(0) entries(1)
+                                    'org/json/JSONTokener'(2 1.00)
+82 sipush 975
+85 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  488 bci: 85   CounterData         count(2)
+
+---------------------- BB Boundary ----------------------
+
+88 aload_1
+89 invokevirtual 35 <org/json/JSONTokener.nextClean()C> 
+  504 bci: 89   VirtualCallData     count(0) nonprofiled_count(0) entries(1)
+                                    'org/json/JSONTokener'(2 1.00)
+92 bipush 44
+94 if_icmpne 133
+  560 bci: 94   BranchData          taken(2) displacement(216)
+                                    not taken(0)
+
+---------------------- BB Boundary ----------------------
+
+...
+97 sipush 976
+100 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  592 bci: 100  CounterData         count(0)
+103 aload_1
+104 invokevirtual 46 <org/json/JSONTokener.back()V> 
+  608 bci: 104  VirtualCallData     count(0) nonprofiled_count(0) entries(0)
+107 sipush 977
+110 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  664 bci: 110  CounterData         count(0)
+113 aload_0
+114 getfield 25 <org/json/JSONArray.myArrayList/Ljava/util/ArrayList;> 
+117 getstatic 52 <org/json/JSONObject.NULL/Ljava/lang/Object;> 
+120 invokevirtual 56 <java/util/ArrayList.add(Ljava/lang/Object;)Z> 
+  680 bci: 120  VirtualCallData     count(0) nonprofiled_count(0) entries(0)
+123 pop
+124 sipush 978
+127 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  736 bci: 127  CounterData         count(0)
+130 goto 161
+  752 bci: 130  JumpData            taken(0) displacement(224)
+
+---------------------- BB Boundary ----------------------
+
+133 aload_1
+134 invokevirtual 46 <org/json/JSONTokener.back()V> 
+  776 bci: 134  VirtualCallData     count(0) nonprofiled_count(0) entries(1)
+                                    'org/json/JSONTokener'(2 1.00)
+137 sipush 979
+140 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  832 bci: 140  CounterData         count(2)
+143 fast_aaccess_0
+144 fast_agetfield 25 <org/json/JSONArray.myArrayList/Ljava/util/ArrayList;> 
+147 aload_1
+148 invokevirtual 60 <org/json/JSONTokener.nextValue()Ljava/lang/Object;> 
+  848 bci: 148  VirtualCallData     count(0) nonprofiled_count(0) entries(1)
+                                    'org/json/JSONTokener'(2 1.00)
+151 invokevirtual 56 <java/util/ArrayList.add(Ljava/lang/Object;)Z> 
+  904 bci: 151  VirtualCallData     count(0) nonprofiled_count(0) entries(1)
+                                    'java/util/ArrayList'(2 1.00)
+154 pop
+155 sipush 980
+158 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  960 bci: 158  CounterData         count(2)
+
+---------------------- BB Boundary ----------------------
+
+161 aload_1
+162 invokevirtual 35 <org/json/JSONTokener.nextClean()C> 
+  976 bci: 162  VirtualCallData     count(0) nonprofiled_count(0) entries(1)
+                                    'org/json/JSONTokener'(2 1.00)
+165 fast_linearswitch 274 3  0:200, 44:213, 93:267
+  1032bci: 165  MultiBranchData     default_count(0) displacement(488)
+                                    count(0) displacement(80)
+                                    count(0) displacement(152)
+                                    count(2) displacement(472)
+
+---------------------- BB Boundary ----------------------
+
+200 aload_1
+201 fast_aldc Expected a ',' or ']'
+203 invokevirtual 41 <org/json/JSONTokener.syntaxError(Ljava/lang/String;)Lorg/json/JSONException;> 
+  1112bci: 203  VirtualCallData     count(0) nonprofiled_count(0) entries(0)
+206 sipush 981
+209 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  1168bci: 209  CounterData         count(0)
+212 athrow
+
+---------------------- BB Boundary ----------------------
+
+213 aload_1
+214 invokevirtual 35 <org/json/JSONTokener.nextClean()C> 
+  1184bci: 214  VirtualCallData     count(0) nonprofiled_count(0) entries(0)
+217 istore_2
+218 iload_2
+219 ifne 241
+  1240bci: 219  BranchData          taken(0) displacement(120)
+                                    not taken(0)
+
+---------------------- BB Boundary ----------------------
+
+222 sipush 982
+225 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  1272bci: 225  CounterData         count(0)
+228 aload_1
+229 fast_aldc Expected a ',' or ']'
+231 invokevirtual 41 <org/json/JSONTokener.syntaxError(Ljava/lang/String;)Lorg/json/JSONException;> 
+  1288bci: 231  VirtualCallData     count(0) nonprofiled_count(0) entries(0)
+234 sipush 983
+237 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  1344bci: 237  CounterData         count(0)
+240 athrow
+
+---------------------- BB Boundary ----------------------
+
+241 iload_2
+242 bipush 93
+244 if_icmpne 254
+  1360bci: 244  BranchData          taken(0) displacement(48)
+                                    not taken(0)
+
+---------------------- BB Boundary ----------------------
+
+247 sipush 984
+250 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  1392bci: 250  CounterData         count(0)
+253 return
+
+---------------------- BB Boundary ----------------------
+
+254 aload_1
+255 invokevirtual 46 <org/json/JSONTokener.back()V> 
+  1408bci: 255  VirtualCallData     count(0) nonprofiled_count(0) entries(0)
+258 sipush 985
+261 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  1464bci: 261  CounterData         count(0)
+264 goto 88
+  1480bci: 264  JumpData            taken(0) displacement(-976)
+
+---------------------- BB Boundary ----------------------
+
+267 sipush 986
+270 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  1504bci: 270  CounterData         count(2)
+273 return
+
+---------------------- BB Boundary ----------------------
+
+274 aload_1
+275 fast_aldc Expected a ',' or ']'
+277 invokevirtual 41 <org/json/JSONTokener.syntaxError(Ljava/lang/String;)Lorg/json/JSONException;> 
+  1520bci: 277  VirtualCallData     count(0) nonprofiled_count(0) entries(0)
+280 sipush 987
+283 invokestatic 570 <com/code_intelligence/jazzer/runtime/CoverageMap.recordCoverage(I)V> 
+  1576bci: 283  CounterData         count(0)
+286 athrow
+287 return
+
+---------------------- BB Boundary ----------------------
+-------------------- End of a method --------------------

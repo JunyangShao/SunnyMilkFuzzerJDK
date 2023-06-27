@@ -26,8 +26,8 @@ rm -r $4
 mkdir $4
 rm /home/junyangshao/Desktop/playground/research/SunnyMilkFuzzerJDK/benchmark/fuzzer-finder/smf_out/*
 if [[ $# -eq 5 ]]; then
-	# perf record -o smf_perf.data timeout "$5"s ./LibFuzzerLauncher fuzzerOut $2SMF "---p=$3" > $4/smf-out 2>&1
-	timeout "$5"s ./LibFuzzerLauncher fuzzerOut $2SMF "---p=$3" > $4/smf-out 2>&1
+	perf record -o smf_perf.data timeout "$5"s ./LibFuzzerLauncher fuzzerOut $2SMF "---p=$3" > $4/smf-out 2>&1
+	# timeout "$5"s ./LibFuzzerLauncher fuzzerOut $2SMF "---p=$3" > $4/smf-out 2>&1
 else
 	./LibFuzzerLauncher fuzzerOut $2SMF "---p=$3" > $4/smf-out 2>&1
 fi
