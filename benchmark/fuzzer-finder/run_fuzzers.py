@@ -227,7 +227,6 @@ if mode == "plot":
                 shutil.rmtree('./tmp_fuzzerOut')
 
                 os.chdir('../../fuzzer-finder/')
-
             plt.plot(coverage_over_time['Jazzer'], label='Jazzer')
             plt.plot(coverage_over_time['SMF'], label='SMF')
             plt.title(f'[{image_name}] {fuzzer} {suffix}')
@@ -235,3 +234,4 @@ if mode == "plot":
             plt.ylabel('Coverage')
             plt.legend()
             plt.savefig(f'../plots/{image_name}_{fuzzer}_{suffix}.png')
+            plt.clf()
