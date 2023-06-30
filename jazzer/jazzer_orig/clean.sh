@@ -1,0 +1,10 @@
+rm -f crash-*
+rm -f hs_err_*
+rm -f Crash*
+rm -f slow-*
+rm -f *.class
+rm -f LibFuzzerLauncher
+rm -rf fuzzerOut
+rm -f jacoco.exec
+rm -f /home/junyangshao/Desktop/playground/research/SunnyMilkFuzzerJDK/benchmark/fuzzer-finder/smf_out/*
+rm -f /home/junyangshao/Desktop/playground/research/SunnyMilkFuzzerJDK/benchmark/fuzzer-finder/jzr_out/*
