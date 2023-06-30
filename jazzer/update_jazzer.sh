@@ -1,7 +1,8 @@
-JAZZER_DIR=/home/junyangshao/Desktop/playground/research/jazzer
-export JAVA_HOME=/home/junyangshao/Desktop/playground/jdk/build/linux-x86_64-server-release/jdk
+JAZZER_DIR=/home/junyangshao/Desktop/playground/research/jazzer2
+#export JAVA_HOME=/home/junyangshao/Desktop/playground/jdk/build/linux-x86_64-server-release/jdk
+export JAVA_HOME=./
 cd $JAZZER_DIR
-bazel build jazzer_release
+bazel build --verbose_failures jazzer_release
 cd -
 rm jazzer_release.tar.gz
 cp /home/junyangshao/Desktop/playground/research/jazzer2/bazel-bin/jazzer_release.tar.gz .
