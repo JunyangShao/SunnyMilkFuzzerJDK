@@ -105,7 +105,7 @@ class TracePC {
   void IterateCoveredFunctions(CallBack CB);
 
   void AddValueForMemcmp(void *caller_pc, const void *s1, const void *s2,
-                         size_t n, bool StopAtZero);
+                         size_t len1, size_t len2, bool StopAtZero);
 
   TableOfRecentCompares<uint32_t, 32> TORC4;
   TableOfRecentCompares<uint64_t, 32> TORC8;
@@ -201,37 +201,65 @@ size_t ForEachNonZeroByte(const uint8_t *Begin, const uint8_t *End,
                         uint8_t *MethodHitTable,
                         uint32_t &TotalCounted,
                         size_t FirstFeature, Callback Handle8bitCounter) {
-  if (CurMethodIdx >= kMethodNum) {
-    // No more methods, no need to scan the rest.
-    return End - Begin;
-  }
+  // if (CurMethodIdx >= kMethodNum) {
+  //   // No more methods, no need to scan the rest.
+  //   return End - Begin;
+  // }
+  // static int ran_times = 0;
+  // if (ran_times++ > 100) {
+  //   return End - Begin;
+  // }
   typedef uintptr_t LargeType;
   const size_t Step = sizeof(LargeType) / sizeof(uint8_t);
-  const size_t StepMask = Step - 1;
+  // const size_t StepMask = Step - 1;
+  static const size_t AvxStep = sizeof(__m256i);
+  const uint8_t *P = Begin;
 
   // Iterate by 1 byte until either the alignment boundary or the end.
   // After changes made by SunnyMilkFuzzer, all address will be well-aligned,
   // this will not be executed.
-  // for (; reinterpret_cast<uintptr_t>(P) & StepMask && P < End; P++)
+  // for (; reinterpret_cast<uintptr_t>(P) & AvxStep && P < End; P++)
   //   if (uint8_t V = *P)
   //     Handle8bitCounter(FirstFeature, P - Begin, V);
 
   // Iterate by Step bytes at a time.
   // Changed by SunnyMilkFuzzer
-  // static constexpr size_t SMFTableMethodSize = 256u;
-  // auto PMethodStart = Begin;
-  // for(; PMethodStart + SMFTableMethodSize <= End; PMethodStart += SMFTableMethodSize) {
-  //   if (*PMethodStart != 0) {
-  //     auto PMethodEnd = PMethodStart + SMFTableMethodSize;
-  //     for (P = PMethodStart; P + Step <= PMethodEnd; P += Step)
-  //       if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
-  //         Bundle = HostToLE(Bundle);
-  //         for (size_t I = 0; I < Step; I++, Bundle >>= 8)
-  //           if (uint8_t V = Bundle & 0xff)
-  //             Handle8bitCounter(FirstFeature, P - Begin + I, V);
-  //       } 
-  //   }
-  // }
+  static constexpr size_t SMFTableMethodSize = 256u;
+  auto PMethodStart = Begin;
+  // printf("[LibFuzzer]\t Begin: %p, End: %p\n", Begin, End);
+  for(; PMethodStart + SMFTableMethodSize <= End; PMethodStart += SMFTableMethodSize) {
+    // printf("[LibFuzzer]\t PMethodStart: %p\n", PMethodStart);
+    if (*PMethodStart > 32) {
+      auto PMethodEnd = PMethodStart + SMFTableMethodSize;
+      for (P = PMethodStart; P + Step <= PMethodEnd; P += Step)
+        if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
+          Bundle = HostToLE(Bundle);
+          for (size_t I = 0; I < Step; I++, Bundle >>= 8)
+            if (uint8_t V = Bundle & 0xff)
+              Handle8bitCounter(FirstFeature, P - Begin + I, V);
+        } 
+    } else if (*PMethodStart) {
+      const uint8_t *AvxP = PMethodStart;
+      const uint8_t *AvxPEnd = PMethodStart + SMFTableMethodSize;
+      for (; AvxP + AvxStep <= AvxPEnd; AvxP += AvxStep) {
+        __m256i AvxV = _mm256_loadu_si256((__m256i*)AvxP);
+        if (!_mm256_testz_si256(AvxV, AvxV)) {
+          P = AvxP;
+          const uint8_t *PEnd = AvxP + AvxStep;
+          for (; P + Step <= PEnd; P += Step) {
+            if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
+              Bundle = HostToLE(Bundle);
+              for (size_t I = 0; I < Step; I++, Bundle >>= 8) {
+                if (uint8_t V = Bundle & 0xff) {
+                  Handle8bitCounter(FirstFeature, P - Begin + I, V);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   // while(true) {
   //   const uint8_t *P = Begin < CurMethodStart ? CurMethodStart : Begin;
@@ -266,25 +294,25 @@ size_t ForEachNonZeroByte(const uint8_t *Begin, const uint8_t *End,
   //   }
   // }
 
-  const uint8_t *AvxP = Begin;
-  static const size_t AvxStep = sizeof(__m256i);
-  for (; AvxP + AvxStep <= End; AvxP += AvxStep) {
-    __m256i AvxV = _mm256_loadu_si256((__m256i*)AvxP);
-    if (!_mm256_testz_si256(AvxV, AvxV)) {
-      const uint8_t *P = AvxP;
-      const uint8_t *PEnd = AvxP + AvxStep;
-      for (; P + Step <= PEnd; P += Step) {
-        if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
-          Bundle = HostToLE(Bundle);
-          for (size_t I = 0; I < Step; I++, Bundle >>= 8) {
-            if (uint8_t V = Bundle & 0xff) {
-              Handle8bitCounter(FirstFeature, P - Begin + I, V);
-            }
-          }
-        }
-      }
-    }
-  }
+  // const uint8_t *AvxP = P;
+  // for (; AvxP + AvxStep <= End; AvxP += AvxStep) {
+  //   __m256i AvxV = _mm256_loadu_si256((__m256i*)AvxP);
+  //   if (!_mm256_testz_si256(AvxV, AvxV)) {
+  //     P = AvxP;
+  //     const uint8_t *PEnd = AvxP + AvxStep;
+  //     for (; P + Step <= PEnd; P += Step) {
+  //       if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
+  //         Bundle = HostToLE(Bundle);
+  //         for (size_t I = 0; I < Step; I++, Bundle >>= 8) {
+  //           if (uint8_t V = Bundle & 0xff) {
+  //             Handle8bitCounter(FirstFeature, P - Begin + I, V);
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+  // P = AvxP;
 
   // Iterate by 1 byte until the end.
   // After changes made by SunnyMilkFuzzer, all address will be well-aligned,

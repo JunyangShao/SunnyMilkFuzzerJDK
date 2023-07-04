@@ -20,8 +20,6 @@ import com.alibaba.fastjson.JSONException;
 
 public class ExampleFuzzer2 {
   private static int cnt = 0;
-  private static long time_elapsed = 0;
-  private static long start = 0;
   private static final String s =
   "\r\n{\r\n" +
   "    \"glossary\": {\r\n" +
@@ -45,6 +43,8 @@ public class ExampleFuzzer2 {
   "        }\r\n" +
   "    }\r\n" +
   "}";
+  private static long time_elapsed = 0;
+  private static long start = 0;
   public static void fuzzerInitialize() {
     time_elapsed = 0;
     // Optional initialization to be run before the first call to fuzzerTestOneInput.

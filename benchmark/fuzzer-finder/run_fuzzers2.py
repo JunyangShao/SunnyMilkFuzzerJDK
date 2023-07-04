@@ -3,9 +3,11 @@ import subprocess
 import sys
 import re
 import shutil
-from datetime import datetime
+import numpy as np
+from datetime import datetime, timedelta
 from dateutil.rrule import rrule, MINUTELY
 from matplotlib import pyplot as plt
+
 
 def parse_file(file_path):
     with open(file_path, 'r') as file:
@@ -28,7 +30,7 @@ def parse_file(file_path):
 #     "gson", "jakarta-mail-api", "javaparser", "joda-time", "json-smart-v2",
 #     "log4j2", "retrofit", "spring-boot", "stringtemplate4"
 # ]
-image_names = ["json-java"]
+image_names = ["json-smart-v2"]
 image_names_excluded = ["jersey","mysql-connector-j", "guice", "self4j-api",
                         "spring-cloud-sleuth-brave", "java-example", "json-sanitizer",
                         "osgi", "snakeyaml", "spring-data-mongodb", "log4j2",
@@ -199,7 +201,13 @@ if mode == "plot":
                 end_date = file_dates[-1]
                 print(start_date, end_date)
 
-                intervals = list(rrule(MINUTELY, dtstart=start_date, until=end_date, count=30))
+
+                # Generate 30 evenly spaced timestamps between start_date and end_date
+                timestamps = np.linspace(start_date.timestamp(), end_date.timestamp(), 30)
+
+                # Convert the timestamps back into datetime objects
+                intervals = [datetime.fromtimestamp(ts) for ts in timestamps]
+                
                 print(intervals)
                 for i in range(len(intervals) - 1):
                     for file in os.listdir('./tmp_fuzzerOut'):

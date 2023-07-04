@@ -28,6 +28,16 @@
 // Used by -fsanitize-coverage=stack-depth to track stack depth
 ATTRIBUTES_INTERFACE_TLS_INITIAL_EXEC uintptr_t __sancov_lowest_stack;
 
+extern "C" size_t __sanitizer_cov_get_observed_pcs(uintptr_t **covered_pcs_out) {
+  size_t size = fuzzer::TPC.GetTotalPCCoverage();
+  auto covered_pcs = new uintptr_t[size];
+  *covered_pcs_out = covered_pcs;
+  fuzzer::TPC.ForEachObservedPC([&](const fuzzer::TracePC::PCTableEntry* entry) {
+    *covered_pcs++ = entry->PC;
+  });
+  return size;
+}
+
 namespace fuzzer {
 
 TracePC TPC;
@@ -358,22 +368,29 @@ void TracePC::PrintCoverage(bool PrintAllCounters) {
 
 ATTRIBUTE_NO_SANITIZE_ALL
 void TracePC::AddValueForMemcmp(void *caller_pc, const void *s1, const void *s2,
-                                size_t n, bool StopAtZero) {
-  if (!n) return;
-  size_t Len = std::min(n, Word::GetMaxSize());
+                                size_t Len1, size_t Len2, bool StopAtZero) {
+  if (!Len1 || !Len2)
+    return;
+  Len1 = std::min(Len1, Word::GetMaxSize());
+  Len2 = std::min(Len2, Word::GetMaxSize());
+  size_t Len = std::min(Len1, Len2);
   const uint8_t *A1 = reinterpret_cast<const uint8_t *>(s1);
   const uint8_t *A2 = reinterpret_cast<const uint8_t *>(s2);
   uint8_t B1[Word::kMaxSize];
   uint8_t B2[Word::kMaxSize];
   // Copy the data into locals in this non-msan-instrumented function
   // to avoid msan complaining further.
-  size_t Hash = 0;  // Compute some simple hash of both strings.
+  size_t Hash = 0; // Compute some simple hash of both strings.
   for (size_t i = 0; i < Len; i++) {
     B1[i] = A1[i];
     B2[i] = A2[i];
     size_t T = B1[i];
     Hash ^= (T << 8) | B2[i];
   }
+  for (size_t i = Len; i < Len1; i++)
+    B1[i] = A1[i];
+  for (size_t i = Len; i < Len2; i++)
+    B2[i] = A2[i];
   size_t I = 0;
   uint8_t HammingDistance = 0;
   for (; I < Len; I++) {
@@ -386,7 +403,7 @@ void TracePC::AddValueForMemcmp(void *caller_pc, const void *s1, const void *s2,
   size_t Idx = (PC & 4095) | (I << 12);
   Idx += HammingDistance;
   ValueProfileMap.AddValue(Idx);
-  TORCW.Insert(Idx ^ Hash, Word(B1, Len), Word(B2, Len));
+  TORCW.Insert(Idx ^ Hash, Word(B1, Len1), Word(B2, Len2));
 }
 
 template <class T>
@@ -492,9 +509,22 @@ void __sanitizer_cov_trace_pc_indir(uintptr_t Callee) {
 
 ATTRIBUTE_INTERFACE
 ATTRIBUTE_NO_SANITIZE_ALL
+void __sanitizer_cov_trace_pc_indir_with_pc(uintptr_t PC, uintptr_t Callee) {
+  fuzzer::TPC.HandleCallerCallee(PC, Callee);
+}
+
+ATTRIBUTE_INTERFACE
+ATTRIBUTE_NO_SANITIZE_ALL
 ATTRIBUTE_TARGET_POPCNT
 void __sanitizer_cov_trace_cmp8(uint64_t Arg1, uint64_t Arg2) {
   uintptr_t PC = reinterpret_cast<uintptr_t>(GET_CALLER_PC());
+  fuzzer::TPC.HandleCmp(PC, Arg1, Arg2);
+}
+
+ATTRIBUTE_INTERFACE
+ATTRIBUTE_NO_SANITIZE_ALL
+ATTRIBUTE_TARGET_POPCNT
+void __sanitizer_cov_trace_cmp8_with_pc(uintptr_t PC, uint64_t Arg1, uint64_t Arg2) {
   fuzzer::TPC.HandleCmp(PC, Arg1, Arg2);
 }
 
@@ -512,8 +542,22 @@ void __sanitizer_cov_trace_const_cmp8(uint64_t Arg1, uint64_t Arg2) {
 ATTRIBUTE_INTERFACE
 ATTRIBUTE_NO_SANITIZE_ALL
 ATTRIBUTE_TARGET_POPCNT
+void __sanitizer_cov_trace_const_cmp8_with_pc(uintptr_t PC, uint64_t Arg1, uint64_t Arg2) {
+  fuzzer::TPC.HandleCmp(PC, Arg1, Arg2);
+}
+
+ATTRIBUTE_INTERFACE
+ATTRIBUTE_NO_SANITIZE_ALL
+ATTRIBUTE_TARGET_POPCNT
 void __sanitizer_cov_trace_cmp4(uint32_t Arg1, uint32_t Arg2) {
   uintptr_t PC = reinterpret_cast<uintptr_t>(GET_CALLER_PC());
+  fuzzer::TPC.HandleCmp(PC, Arg1, Arg2);
+}
+
+ATTRIBUTE_INTERFACE
+ATTRIBUTE_NO_SANITIZE_ALL
+ATTRIBUTE_TARGET_POPCNT
+void __sanitizer_cov_trace_cmp4_with_pc(uintptr_t PC, uint32_t Arg1, uint32_t Arg2) {
   fuzzer::TPC.HandleCmp(PC, Arg1, Arg2);
 }
 
@@ -528,8 +572,22 @@ void __sanitizer_cov_trace_const_cmp4(uint32_t Arg1, uint32_t Arg2) {
 ATTRIBUTE_INTERFACE
 ATTRIBUTE_NO_SANITIZE_ALL
 ATTRIBUTE_TARGET_POPCNT
+void __sanitizer_cov_trace_const_cmp4_with_pc(uintptr_t PC, uint32_t Arg1, uint32_t Arg2) {
+  fuzzer::TPC.HandleCmp(PC, Arg1, Arg2);
+}
+
+ATTRIBUTE_INTERFACE
+ATTRIBUTE_NO_SANITIZE_ALL
+ATTRIBUTE_TARGET_POPCNT
 void __sanitizer_cov_trace_cmp2(uint16_t Arg1, uint16_t Arg2) {
   uintptr_t PC = reinterpret_cast<uintptr_t>(GET_CALLER_PC());
+  fuzzer::TPC.HandleCmp(PC, Arg1, Arg2);
+}
+
+ATTRIBUTE_INTERFACE
+ATTRIBUTE_NO_SANITIZE_ALL
+ATTRIBUTE_TARGET_POPCNT
+void __sanitizer_cov_trace_cmp2_with_pc(uintptr_t PC, uint16_t Arg1, uint16_t Arg2) {
   fuzzer::TPC.HandleCmp(PC, Arg1, Arg2);
 }
 
@@ -544,8 +602,22 @@ void __sanitizer_cov_trace_const_cmp2(uint16_t Arg1, uint16_t Arg2) {
 ATTRIBUTE_INTERFACE
 ATTRIBUTE_NO_SANITIZE_ALL
 ATTRIBUTE_TARGET_POPCNT
+void __sanitizer_cov_trace_const_cmp2_with_pc(uintptr_t PC, uint16_t Arg1, uint16_t Arg2) {
+  fuzzer::TPC.HandleCmp(PC, Arg1, Arg2);
+}
+
+ATTRIBUTE_INTERFACE
+ATTRIBUTE_NO_SANITIZE_ALL
+ATTRIBUTE_TARGET_POPCNT
 void __sanitizer_cov_trace_cmp1(uint8_t Arg1, uint8_t Arg2) {
   uintptr_t PC = reinterpret_cast<uintptr_t>(GET_CALLER_PC());
+  fuzzer::TPC.HandleCmp(PC, Arg1, Arg2);
+}
+
+ATTRIBUTE_INTERFACE
+ATTRIBUTE_NO_SANITIZE_ALL
+ATTRIBUTE_TARGET_POPCNT
+void __sanitizer_cov_trace_cmp1_with_pc(uintptr_t PC, uint8_t Arg1, uint8_t Arg2) {
   fuzzer::TPC.HandleCmp(PC, Arg1, Arg2);
 }
 
@@ -560,7 +632,14 @@ void __sanitizer_cov_trace_const_cmp1(uint8_t Arg1, uint8_t Arg2) {
 ATTRIBUTE_INTERFACE
 ATTRIBUTE_NO_SANITIZE_ALL
 ATTRIBUTE_TARGET_POPCNT
-void __sanitizer_cov_trace_switch(uint64_t Val, uint64_t *Cases) {
+void __sanitizer_cov_trace_const_cmp1_with_pc(uintptr_t PC, uint8_t Arg1, uint8_t Arg2) {
+  fuzzer::TPC.HandleCmp(PC, Arg1, Arg2);
+}
+
+ATTRIBUTE_INTERFACE
+ATTRIBUTE_NO_SANITIZE_ALL
+ATTRIBUTE_TARGET_POPCNT
+void __sanitizer_cov_trace_switch_with_pc(uintptr_t PC, uint64_t Val, uint64_t *Cases) {
   uint64_t N = Cases[0];
   uint64_t ValSizeInBits = Cases[1];
   uint64_t *Vals = Cases + 2;
@@ -572,7 +651,6 @@ void __sanitizer_cov_trace_switch(uint64_t Val, uint64_t *Cases) {
   // Also skip small inputs values, they won't give good signal.
   if (Val < 256)
     return;
-  uintptr_t PC = reinterpret_cast<uintptr_t>(GET_CALLER_PC());
   size_t i;
   uint64_t Smaller = 0;
   uint64_t Larger = ~(uint64_t)0;
@@ -607,8 +685,23 @@ void __sanitizer_cov_trace_switch(uint64_t Val, uint64_t *Cases) {
 ATTRIBUTE_INTERFACE
 ATTRIBUTE_NO_SANITIZE_ALL
 ATTRIBUTE_TARGET_POPCNT
+void __sanitizer_cov_trace_switch(uint64_t Val, uint64_t *Cases) {
+  uintptr_t PC = reinterpret_cast<uintptr_t>(GET_CALLER_PC());
+  __sanitizer_cov_trace_switch_with_pc(PC, Val, Cases);
+}
+
+ATTRIBUTE_INTERFACE
+ATTRIBUTE_NO_SANITIZE_ALL
+ATTRIBUTE_TARGET_POPCNT
 void __sanitizer_cov_trace_div4(uint32_t Val) {
   uintptr_t PC = reinterpret_cast<uintptr_t>(GET_CALLER_PC());
+  fuzzer::TPC.HandleCmp(PC, Val, (uint32_t)0);
+}
+
+ATTRIBUTE_INTERFACE
+ATTRIBUTE_NO_SANITIZE_ALL
+ATTRIBUTE_TARGET_POPCNT
+void __sanitizer_cov_trace_div4_with_pc(uintptr_t PC, uint32_t Val) {
   fuzzer::TPC.HandleCmp(PC, Val, (uint32_t)0);
 }
 
@@ -623,9 +716,36 @@ void __sanitizer_cov_trace_div8(uint64_t Val) {
 ATTRIBUTE_INTERFACE
 ATTRIBUTE_NO_SANITIZE_ALL
 ATTRIBUTE_TARGET_POPCNT
+void __sanitizer_cov_trace_div8_with_pc(uintptr_t PC, uint64_t Val) {
+  fuzzer::TPC.HandleCmp(PC, Val, (uint64_t)0);
+}
+
+ATTRIBUTE_INTERFACE
+ATTRIBUTE_NO_SANITIZE_ALL
+ATTRIBUTE_TARGET_POPCNT
 void __sanitizer_cov_trace_gep(uintptr_t Idx) {
   uintptr_t PC = reinterpret_cast<uintptr_t>(GET_CALLER_PC());
   fuzzer::TPC.HandleCmp(PC, Idx, (uintptr_t)0);
+}
+
+ATTRIBUTE_INTERFACE
+ATTRIBUTE_NO_SANITIZE_ALL
+ATTRIBUTE_TARGET_POPCNT
+void __sanitizer_cov_trace_gep_with_pc(uintptr_t PC, uintptr_t Idx) {
+  fuzzer::TPC.HandleCmp(PC, Idx, (uintptr_t)0);
+}
+
+ATTRIBUTE_INTERFACE ATTRIBUTE_NO_SANITIZE_MEMORY void
+__sanitizer_weak_hook_compare_bytes(void *caller_pc, const void *s1,
+                                    const void *s2, size_t n1, size_t n2,
+                                    int result) {
+  if (!fuzzer::RunningUserCallback)
+    return;
+  if (result == 0)
+    return; // No reason to mutate.
+  if (n1 <= 1 || n2 <= 1)
+    return; // Not interesting.
+  fuzzer::TPC.AddValueForMemcmp(caller_pc, s1, s2, n1, n2, false);
 }
 
 ATTRIBUTE_INTERFACE ATTRIBUTE_NO_SANITIZE_MEMORY
@@ -634,7 +754,7 @@ void __sanitizer_weak_hook_memcmp(void *caller_pc, const void *s1,
   if (!fuzzer::RunningUserCallback) return;
   if (result == 0) return;  // No reason to mutate.
   if (n <= 1) return;  // Not interesting.
-  fuzzer::TPC.AddValueForMemcmp(caller_pc, s1, s2, n, /*StopAtZero*/false);
+  fuzzer::TPC.AddValueForMemcmp(caller_pc, s1, s2, n, n, /*StopAtZero*/ false);
 }
 
 ATTRIBUTE_INTERFACE ATTRIBUTE_NO_SANITIZE_MEMORY
@@ -647,7 +767,7 @@ void __sanitizer_weak_hook_strncmp(void *caller_pc, const char *s1,
   n = std::min(n, Len1);
   n = std::min(n, Len2);
   if (n <= 1) return;  // Not interesting.
-  fuzzer::TPC.AddValueForMemcmp(caller_pc, s1, s2, n, /*StopAtZero*/true);
+  fuzzer::TPC.AddValueForMemcmp(caller_pc, s1, s2, n, n, /*StopAtZero*/ true);
 }
 
 ATTRIBUTE_INTERFACE ATTRIBUTE_NO_SANITIZE_MEMORY
@@ -657,7 +777,7 @@ void __sanitizer_weak_hook_strcmp(void *caller_pc, const char *s1,
   if (result == 0) return;  // No reason to mutate.
   size_t N = fuzzer::InternalStrnlen2(s1, s2);
   if (N <= 1) return;  // Not interesting.
-  fuzzer::TPC.AddValueForMemcmp(caller_pc, s1, s2, N, /*StopAtZero*/true);
+  fuzzer::TPC.AddValueForMemcmp(caller_pc, s1, s2, N, N, /*StopAtZero*/ true);
 }
 
 ATTRIBUTE_INTERFACE ATTRIBUTE_NO_SANITIZE_MEMORY
