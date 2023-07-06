@@ -224,42 +224,42 @@ size_t ForEachNonZeroByte(const uint8_t *Begin, const uint8_t *End,
 
   // Iterate by Step bytes at a time.
   // Changed by SunnyMilkFuzzer
-  static constexpr size_t SMFTableMethodSize = 256u;
-  auto PMethodStart = Begin;
-  // printf("[LibFuzzer]\t Begin: %p, End: %p\n", Begin, End);
-  for(; PMethodStart + SMFTableMethodSize <= End; PMethodStart += SMFTableMethodSize) {
-    // printf("[LibFuzzer]\t PMethodStart: %p\n", PMethodStart);
-    if (*PMethodStart > 32) {
-      auto PMethodEnd = PMethodStart + SMFTableMethodSize;
-      for (P = PMethodStart; P + Step <= PMethodEnd; P += Step)
-        if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
-          Bundle = HostToLE(Bundle);
-          for (size_t I = 0; I < Step; I++, Bundle >>= 8)
-            if (uint8_t V = Bundle & 0xff)
-              Handle8bitCounter(FirstFeature, P - Begin + I, V);
-        } 
-    } else if (*PMethodStart) {
-      const uint8_t *AvxP = PMethodStart;
-      const uint8_t *AvxPEnd = PMethodStart + SMFTableMethodSize;
-      for (; AvxP + AvxStep <= AvxPEnd; AvxP += AvxStep) {
-        __m256i AvxV = _mm256_loadu_si256((__m256i*)AvxP);
-        if (!_mm256_testz_si256(AvxV, AvxV)) {
-          P = AvxP;
-          const uint8_t *PEnd = AvxP + AvxStep;
-          for (; P + Step <= PEnd; P += Step) {
-            if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
-              Bundle = HostToLE(Bundle);
-              for (size_t I = 0; I < Step; I++, Bundle >>= 8) {
-                if (uint8_t V = Bundle & 0xff) {
-                  Handle8bitCounter(FirstFeature, P - Begin + I, V);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+  // static constexpr size_t SMFTableMethodSize = 256u;
+  // auto PMethodStart = Begin;
+  // // printf("[LibFuzzer]\t Begin: %p, End: %p\n", Begin, End);
+  // for(; PMethodStart + SMFTableMethodSize <= End; PMethodStart += SMFTableMethodSize) {
+  //   // printf("[LibFuzzer]\t PMethodStart: %p\n", PMethodStart);
+  //   if (*PMethodStart > 8) {
+  //     auto PMethodEnd = PMethodStart + SMFTableMethodSize;
+  //     for (P = PMethodStart; P + Step <= PMethodEnd; P += Step)
+  //       if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
+  //         Bundle = HostToLE(Bundle);
+  //         for (size_t I = 0; I < Step; I++, Bundle >>= 8)
+  //           if (uint8_t V = Bundle & 0xff)
+  //             Handle8bitCounter(FirstFeature, P - Begin + I, V);
+  //       } 
+  //   } else if (*PMethodStart) {
+  //     const uint8_t *AvxP = PMethodStart;
+  //     const uint8_t *AvxPEnd = PMethodStart + SMFTableMethodSize;
+  //     for (; AvxP + AvxStep <= AvxPEnd; AvxP += AvxStep) {
+  //       __m256i AvxV = _mm256_loadu_si256((__m256i*)AvxP);
+  //       if (!_mm256_testz_si256(AvxV, AvxV)) {
+  //         P = AvxP;
+  //         const uint8_t *PEnd = AvxP + AvxStep;
+  //         for (; P + Step <= PEnd; P += Step) {
+  //           if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
+  //             Bundle = HostToLE(Bundle);
+  //             for (size_t I = 0; I < Step; I++, Bundle >>= 8) {
+  //               if (uint8_t V = Bundle & 0xff) {
+  //                 Handle8bitCounter(FirstFeature, P - Begin + I, V);
+  //               }
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
   // while(true) {
   //   const uint8_t *P = Begin < CurMethodStart ? CurMethodStart : Begin;
@@ -294,25 +294,25 @@ size_t ForEachNonZeroByte(const uint8_t *Begin, const uint8_t *End,
   //   }
   // }
 
-  // const uint8_t *AvxP = P;
-  // for (; AvxP + AvxStep <= End; AvxP += AvxStep) {
-  //   __m256i AvxV = _mm256_loadu_si256((__m256i*)AvxP);
-  //   if (!_mm256_testz_si256(AvxV, AvxV)) {
-  //     P = AvxP;
-  //     const uint8_t *PEnd = AvxP + AvxStep;
-  //     for (; P + Step <= PEnd; P += Step) {
-  //       if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
-  //         Bundle = HostToLE(Bundle);
-  //         for (size_t I = 0; I < Step; I++, Bundle >>= 8) {
-  //           if (uint8_t V = Bundle & 0xff) {
-  //             Handle8bitCounter(FirstFeature, P - Begin + I, V);
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-  // P = AvxP;
+  const uint8_t *AvxP = P;
+  for (; AvxP + AvxStep <= End; AvxP += AvxStep) {
+    __m256i AvxV = _mm256_loadu_si256((__m256i*)AvxP);
+    if (!_mm256_testz_si256(AvxV, AvxV)) {
+      P = AvxP;
+      const uint8_t *PEnd = AvxP + AvxStep;
+      for (; P + Step <= PEnd; P += Step) {
+        if (LargeType Bundle = *reinterpret_cast<const LargeType *>(P)) {
+          Bundle = HostToLE(Bundle);
+          for (size_t I = 0; I < Step; I++, Bundle >>= 8) {
+            if (uint8_t V = Bundle & 0xff) {
+              Handle8bitCounter(FirstFeature, P - Begin + I, V);
+            }
+          }
+        }
+      }
+    }
+  }
+  P = AvxP;
 
   // Iterate by 1 byte until the end.
   // After changes made by SunnyMilkFuzzer, all address will be well-aligned,

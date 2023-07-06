@@ -13,7 +13,7 @@ def parse_file(file_path):
     with open(file_path, 'r') as file:
         lines = file.readlines()
 
-    pattern = r"#(\d+)\t"
+    pattern = r"exec/s: (\d+)"
     for line in reversed(lines):
         match = re.search(pattern, line)
         if match:
@@ -35,7 +35,8 @@ image_names_excluded = ["jersey","mysql-connector-j", "guice", "self4j-api",
                         "spring-cloud-sleuth-brave", "java-example", "json-sanitizer",
                         "osgi", "snakeyaml", "spring-data-mongodb", "log4j2",
                         "retrofit", "spring-boot", "slf4j-api", "fastjson2", "jul-to-slf4j",
-                        "janino", "jettison"]
+                        "janino", "jettison", "json-java", "javaparser"]
+# image_names_excluded = []
 
 mode = "print"
 running_time = 10

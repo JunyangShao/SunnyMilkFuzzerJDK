@@ -27,7 +27,7 @@ namespace fuzzer {
 
 void SetGlobalFeatureMap(uint32_t *TheMap);
 
-void SetSetGloablFeatureMap(void (*setter)(uint32_t*));
+extern "C" ATTRIBUTE_INTERFACE void SetSetGloablFeatureMap(void (*setter)(uint32_t*));
 
 struct InputInfo {
   Unit U;  // The actual input data.

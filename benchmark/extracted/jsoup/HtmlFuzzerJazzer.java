@@ -12,14 +12,14 @@ public class HtmlFuzzerJazzer {
     }
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
-        long before = System.nanoTime();
+        // long before = System.nanoTime();
         Jsoup.parse(data.consumeRemainingAsString());
-        long after = System.nanoTime();
-        time_elapsed += after - before;
-        if (after - start > 150e+10) {
-            System.out.println(before - start);
-            System.out.println(time_elapsed);
-            throw new FuzzerSecurityIssueMedium("mustNeverBeCalled has been called");
-        }
+        // long after = System.nanoTime();
+        // time_elapsed += after - before;
+        // if (after - start > 150e+10) {
+        //     System.out.println(before - start);
+        //     System.out.println(time_elapsed);
+        //     throw new FuzzerSecurityIssueMedium("mustNeverBeCalled has been called");
+        // }
     }
 }

@@ -19,22 +19,20 @@ public class parseFuzzerJazzer {
     }
 
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
-        long before = System.nanoTime();
+        // long before = System.nanoTime();
         String datastring = data.consumeRemainingAsString();
         InputStream datastream = new ByteArrayInputStream(datastring.getBytes());
         try {
             ParserConfiguration configuration = new ParserConfiguration();
             final ParseResult<CompilationUnit> result = new JavaParser(configuration).parse(COMPILATION_UNIT, provider(datastream, configuration.getCharacterEncoding()));
         } catch (Exception e) {
-            time_elapsed += System.nanoTime() - start;
-            return;
         }
-        long after = System.nanoTime();
-        time_elapsed += after - before;
-        if (after - start > 150e+10) {
-            System.out.println(before - start);
-            System.out.println(time_elapsed);
-            throw new FuzzerSecurityIssueMedium("mustNeverBeCalled has been called");
-        }
+        // long after = System.nanoTime();
+        // time_elapsed += after - before;
+        // if (after - start > 150e+10) {
+        //     System.out.println(before - start);
+        //     System.out.println(time_elapsed);
+        //     throw new FuzzerSecurityIssueMedium("mustNeverBeCalled has been called");
+        // }
     }
 }

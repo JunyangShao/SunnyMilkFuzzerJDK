@@ -12,7 +12,7 @@ public class FuzzStreamParserJazzer {
       start = System.nanoTime();
     }
     public static void fuzzerTestOneInput(FuzzedDataProvider data) {
-        long before = System.nanoTime();
+        // long before = System.nanoTime();
         try {
             JsonStreamParser parser = new JsonStreamParser(data.consumeRemainingAsString());
             JsonElement element;
@@ -21,12 +21,12 @@ public class FuzzStreamParserJazzer {
             }
         } catch (JsonParseException expected) {
         }
-        long after = System.nanoTime();
-        time_elapsed += after - before;
-        if (after - start > 150e+10) {
-            System.out.println(before - start);
-            System.out.println(time_elapsed);
-            throw new FuzzerSecurityIssueMedium("mustNeverBeCalled has been called");
-        }
+        // long after = System.nanoTime();
+        // time_elapsed += after - before;
+        // if (after - start > 150e+10) {
+        //     System.out.println(before - start);
+        //     System.out.println(time_elapsed);
+        //     throw new FuzzerSecurityIssueMedium("mustNeverBeCalled has been called");
+        // }
     }
 }

@@ -23,6 +23,7 @@ if [[ $# -eq 5 ]]; then
 	# # Get the PID of the Java application
 	# JAVA_PID=$!
 	# JAVA_PID=$(($JAVA_PID + 2))
+	# echo $JAVA_PID
 
 	# # Sleep for a bit to ensure that the Java application has started
 	# sleep 1

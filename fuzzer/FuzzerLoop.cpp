@@ -40,7 +40,7 @@ namespace fuzzer {
 // For SunnyMilkFuzzer
 void (*SetGloablFeatureMap_ptr)(uint32_t*) = NULL;
 
-void SetSetGloablFeatureMap(void (*setter)(uint32_t*)) {
+extern "C" ATTRIBUTE_INTERFACE void SetSetGloablFeatureMap(void (*setter)(uint32_t*)) {
   SetGloablFeatureMap_ptr = setter;
 }
 
