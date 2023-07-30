@@ -7,6 +7,7 @@ import numpy as np
 from datetime import datetime, timedelta
 from dateutil.rrule import rrule, MINUTELY
 from matplotlib import pyplot as plt
+import math
 
 
 def parse_file(file_path):
@@ -22,20 +23,20 @@ def parse_file(file_path):
     return 0
 
 # image names
-# image_names = [
-#     "janino", "jersey", "json-java",
-#     "jsoup", "mysql-connector-j", "slf4j-api", "spring-cloud-sleuth-brave",
-#     "fastjson2", "guice", "java-example", "jettison", "json-sanitizer",
-#     "jul-to-slf4j", "osgi", "snakeyaml", "spring-data-mongodb",
-#     "gson", "jakarta-mail-api", "javaparser", "joda-time", "json-smart-v2",
-#     "log4j2", "retrofit", "spring-boot", "stringtemplate4"
-# ]
-image_names = ["json-smart-v2"]
+image_names = [
+    "janino", "jersey", "json-java",
+    "jsoup", "mysql-connector-j", "slf4j-api", "spring-cloud-sleuth-brave",
+    "fastjson2", "guice", "java-example", "jettison", "json-sanitizer",
+    "jul-to-slf4j", "osgi", "snakeyaml", "spring-data-mongodb",
+    "gson", "jakarta-mail-api", "javaparser", "joda-time", "json-smart-v2",
+    "log4j2", "retrofit", "spring-boot", "stringtemplate4"
+]
+# image_names = ["json-smart-v2"]
 image_names_excluded = ["jersey","mysql-connector-j", "guice", "self4j-api",
                         "spring-cloud-sleuth-brave", "java-example", "json-sanitizer",
                         "osgi", "snakeyaml", "spring-data-mongodb", "log4j2",
                         "retrofit", "spring-boot", "slf4j-api", "fastjson2", "jul-to-slf4j",
-                        "janino", "jettison", "json-java", "javaparser"]
+                        "janino", "jettison", "javaparser"]
 # image_names_excluded = []
 
 mode = "print"
@@ -45,6 +46,7 @@ suffix = ""
 # mode 'benchmark' means only analyze benchmark reports.
 # mode 'fuzzers' means only run fuzzers.
 # mode 'print' means only print the project names.
+average_suffixes = []
 if len(sys.argv) > 1:
     mode = sys.argv[1]
     if mode == "all" or mode == "fuzzers":
@@ -56,6 +58,12 @@ if len(sys.argv) > 1:
     if mode == "plot":
         if len(sys.argv) > 2:
             suffix = sys.argv[2]
+    if mode == "average":
+        if len(sys.argv) > 2:
+            average_suffixes = sys.argv[2:]
+        else:
+            print("please provide at least 1 suffix")
+            exit(1)
             
 
 if mode == "print":
@@ -105,7 +113,7 @@ if mode == "all" or mode == "fuzzers":
 
 # parse all the reports, they are in ../extracted/{image_name}/{fuzzer}[Jazzer|SMF]Report
 if mode == "all" or mode == "benchmark":
-    print("{:<20}{:<30}{:<20}{:<20}{:<20}{:<20}".format("Project Name", "Fuzzer", "Jazzer Insts", "SMF Insts", "Cov", "Thruput"))
+    print("{:<20}{:<30}{:<20}{:<20}{:<20}{:<20}".format("Project Name", "Fuzzer", "Jazzer-Insts", "SMF-Insts", "Cov", "Thruput"))
     for image_name in image_names:
         if image_name in image_names_excluded:
             continue
@@ -113,6 +121,8 @@ if mode == "all" or mode == "benchmark":
         for fuzzer in os.listdir(f"../extracted/{image_name}"):
             if fuzzer.endswith(".java"):
                 fuzzer_list.add(fuzzer.replace("SMF.java", "").replace("Jazzer.java", "").replace("Main.java", ""))
+        fuzzer_list = list(fuzzer_list)
+        fuzzer_list.sort()
         for fuzzer in fuzzer_list:
             jazzer_stats = int(subprocess.run(["python", "parse_jacoco_report.py",\
                                     f"../extracted/{image_name}/{fuzzer}JazzerReport{suffix}/index.html"],\
@@ -243,4 +253,47 @@ if mode == "plot":
             plt.ylabel('Coverage')
             plt.legend()
             plt.savefig(f'../plots/{image_name}_{fuzzer}_{suffix}.png')
+            plt.clf()
+            
+            storage_path = f'../plots/{image_name}_{fuzzer}_{suffix}_Jazzer_data'
+            with open(storage_path, 'a') as storage_f:
+                storage_f.write(f'{coverage_over_time["Jazzer"]}')
+
+            storage_path = f'../plots/{image_name}_{fuzzer}_{suffix}_SMF_data'
+            with open(storage_path, 'a') as storage_f:
+                storage_f.write(f'{coverage_over_time["SMF"]}')
+
+if mode == "average":
+    for image_name in image_names:
+        if image_name in image_names_excluded:
+            continue
+        fuzzer_list = set()
+        for fuzzer in os.listdir(f"../extracted/{image_name}"):
+            if fuzzer.endswith(".java"):
+                fuzzer_list.add(fuzzer.replace("SMF.java", "").replace("Jazzer.java", "").replace("Main.java", ""))
+        
+        for fuzzer in fuzzer_list:
+            coverage_over_time = dict()
+            coverage_over_time['Jazzer'] = [0 for _ in range(29)]
+            coverage_over_time['SMF'] = [0 for _ in range(29)]
+            for suffix in average_suffixes:
+                jazzer_storage_path = f'../plots/{image_name}_{fuzzer}_{suffix}_Jazzer_data'
+                with open(jazzer_storage_path, 'r') as storage_f:
+                    tmp_list = eval(storage_f.read())
+                    coverage_over_time['Jazzer'] = [x + y for x, y in zip(tmp_list, coverage_over_time['Jazzer'])]
+                smf_storage_path = f'../plots/{image_name}_{fuzzer}_{suffix}_SMF_data'
+                with open(smf_storage_path, 'r') as storage_f:
+                    tmp_list = eval(storage_f.read())
+                    coverage_over_time['SMF'] = [x + y for x, y in zip(tmp_list, coverage_over_time['SMF'])]
+            coverage_over_time['Jazzer'] = [math.ceil(x / len(average_suffixes)) for x in coverage_over_time['Jazzer']]
+            coverage_over_time['SMF'] = [math.ceil(x / len(average_suffixes)) for x in coverage_over_time['SMF']]
+            plt.plot(coverage_over_time['Jazzer'], label='Jazzer')
+            plt.plot(coverage_over_time['SMF'], label='SMF')
+            print(f'{image_name}_{fuzzer}_smf = {coverage_over_time["SMF"]}')
+            print(f'{image_name}_{fuzzer}_jazzer = {coverage_over_time["Jazzer"]}')
+            plt.title(f'[{image_name}] {fuzzer} average')
+            plt.xlabel('Time')
+            plt.ylabel('Coverage')
+            plt.legend()
+            plt.savefig(f'../plots/{image_name}_{fuzzer}_average.png')
             plt.clf()

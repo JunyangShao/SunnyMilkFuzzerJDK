@@ -31,7 +31,10 @@ if [[ $# -eq 5 ]]; then
 	# # Generate the map file using perf-map-agent
 	# $JAVA_HOME/bin/java -cp /home/junyangshao/Desktop/playground/research/perf-map-agent/out/attach-main.jar net.virtualvoid.perf.AttachOnce $JAVA_PID	
 
+	# # cat /proc/$JAVA_PID/maps > $2SMF_proc_maps
+
 	# # Run the perf command
+	# # perf record --call-graph=lbr -o $2SMF_perf.data -p $JAVA_PID -g -- sleep "$5"
 	# perf record -o $2SMF_perf.data -p $JAVA_PID -g -- sleep "$5"
 else
 	$JAZZER_DIR/jazzer fuzzerOut --cp=$3:./ --trace=none --target_class=$2Jazzer > $4/smf-out 2>&1
