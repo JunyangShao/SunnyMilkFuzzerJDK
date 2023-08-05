@@ -37,3 +37,9 @@ jzr_out*/
 *perf.data.old
 
 *jacoco.exec
+*.exec
+*text_report
+*/ExampleFuzzReport/
+*coverage_report
+
+smfbase.tar
