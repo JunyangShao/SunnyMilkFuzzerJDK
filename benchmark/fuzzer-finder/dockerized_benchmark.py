@@ -64,9 +64,53 @@ for image_name in sorted(image_names):
 print(sorted(image_names_filtered))
 print(len(image_names_filtered))
 
-# filter again, only keep projects that are run with `jazzer_driver --agent_path``
+# excluded projects
+# these projects are manually checked to be malformed...
+# image_names_exclude_manual = []
+image_names_exclude_manual = ['angus-mail', 'antlr3-java', 'antlr4-java']
+
+# copy the Dockerfiles of these projects, and modify them, by changing the dependency of 
+# `gcr.io/oss-fuzz-base/base-builder-jvm` to `smfbase-clean`.
+# and also copy build `\$this_dir/jazzer_driver --agent_path=\$this_dir/jazzer_agent_deploy.jar` to
+# be `\$this_dir/jazzer`
+# Then build them.
 for image_name in sorted(image_names_filtered):
+    if image_name in image_names_exclude_manual:
+        continue
+    if any(image_name in line.split()[0] for line in subprocess.check_output(["docker", "image", "ls"]).decode().splitlines()):
+        continue
     os.chdir(f'../oss-fuzz/projects/{image_name}')
+    # if the project is unchanged(does not contain Dockerfile_orig)
+    # then move the Dockerfile to be Dockerfile_orig
+    # similarly for build.sh
+    if not os.path.exists('Dockerfile_orig'):
+        os.rename('Dockerfile', 'Dockerfile_orig')
+    if not os.path.exists('build_orig.sh'):
+        os.rename('build.sh', 'build_orig.sh')
+    # copy the Dockerfile_orig to be Dockerfile and similarly for build.sh
+    subprocess.run(["cp", "Dockerfile_orig", "Dockerfile"], check=True)
+    subprocess.run(["cp", "build_orig.sh", "build.sh"], check=True)
+    # replace the dependency of `gcr.io/oss-fuzz-base/base-builder-jvm` to `smfbase`
+    subprocess.run(["sed", "-i", "s/gcr.io\/oss-fuzz-base\/base-builder-jvm/smfbase/g", "Dockerfile"], check=True)
+    # replace the build command
+    subprocess.run(["sed", "-i", "s/\\\$this_dir\/jazzer_driver --agent_path=\\\$this_dir\/jazzer_agent_deploy\.jar/\/out\/jazzer-orig-bin\/jazzer \
+                    --trace=none -close_fd_mask=3/g", "build.sh"], check=True)
+    open('./Dockerfile', 'a').write('\nRUN FUZZING_LANGUAGE=java compile && cd /out/ && \
+                                     for file in *Fuzzer; do [ -f "$file" ] && \
+                                    cp "$file" "${file}SMF" && \
+                                    sed -i -e \'s|LD_LIBRARY_PATH|JAVA_HOME="/out/jdk-smf" LD_LIBRARY_PATH|g\' \
+                                        -e \'s|jdk-orig|jdk-smf|g\' -e \'s|jazzer-orig-bin|jazzer-smf-bin|g\' \
+                                            "${file}SMF"; done\n\n\
+                                    RUN cd /out/ && ./Checker')
+    os.system('cat Dockerfile')
+    # build the image
+    # remove leftover if 
     subprocess.run(["docker", "build", "-t", image_name, "."], check=True)
+    os.system('docker container prune -f && docker images -f "dangling=true" -q | xargs -r docker rmi')
+    # restore the Dockerfile and build.sh
+    subprocess.run(["cp", "Dockerfile_orig", "Dockerfile"], check=False)
+    subprocess.run(["cp", "build_orig.sh", "build.sh"], check=True)
+    # switch back to main directory
     os.chdir("../../../fuzzer-finder")
+    print(f'built {image_name}')
     exit(0)
