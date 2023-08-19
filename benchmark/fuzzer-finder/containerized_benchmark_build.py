@@ -74,7 +74,12 @@ image_names_exclude_manual = ['angus-mail', 'antlr3-java', 'antlr4-java']
 # and also copy build `\$this_dir/jazzer_driver --agent_path=\$this_dir/jazzer_agent_deploy.jar` to
 # be `\$this_dir/jazzer`
 # Then build them.
+target_count = 0
 for image_name in sorted(image_names_filtered):
+    target_count += 1
+    # only try 50 for now
+    if target_count > 50:
+        break
     if image_name in image_names_exclude_manual:
         continue
     if any(image_name in line.split()[0] for line in subprocess.check_output(["docker", "image", "ls"]).decode().splitlines()):
@@ -105,12 +110,12 @@ for image_name in sorted(image_names_filtered):
     os.system('cat Dockerfile')
     # build the image
     # remove leftover if 
-    subprocess.run(["docker", "build", "-t", image_name, "."], check=True)
+    subprocess.run(["docker", "build", "-t", image_name, "."], check=False)
     os.system('docker container prune -f && docker images -f "dangling=true" -q | xargs -r docker rmi')
     # restore the Dockerfile and build.sh
-    subprocess.run(["cp", "Dockerfile_orig", "Dockerfile"], check=False)
+    subprocess.run(["cp", "Dockerfile_orig", "Dockerfile"], check=True)
     subprocess.run(["cp", "build_orig.sh", "build.sh"], check=True)
     # switch back to main directory
     os.chdir("../../../fuzzer-finder")
     print(f'built {image_name}')
-    exit(0)
+    # exit(0)

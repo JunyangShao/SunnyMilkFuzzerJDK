@@ -41,5 +41,6 @@ jzr_out*/
 *text_report
 */ExampleFuzzReport/
 *coverage_report
+*/containerOut/*
 
 smfbase.tar
