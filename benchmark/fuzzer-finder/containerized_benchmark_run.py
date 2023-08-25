@@ -114,7 +114,7 @@ def process_image(image):
             future.result()
 
     # Cleanup: stop and remove the container
-    run_cmd(["docker", "rm", "-f", container_id])
+    # run_cmd(["docker", "rm", "-f", container_id])
 
 # Get the list of docker images
 cmd = ["docker", "image", "ls", "--format", "{{.Repository}}"]
