@@ -80,7 +80,7 @@ def process_fuzzer(image, container_id, fuzzer):
     
     # Replace parts of the fuzzer file
     for replace_cmd in [
-        f"sed -i 's|--trace=none|{fuzzer}Corpus --trace=none --coverage_report={fuzzer}CovReport|' {filepath}",
+        f"sed -i 's|--trace=none|{fuzzer}Corpus --trace=none --coverage_report={fuzzer}CovReport --coverage_dump={fuzzer}Dump.exec|' {filepath}",
         f"sed -i 's|/out/jazzer-smf-bin/jazzer|timeout 360 /out/jazzer-smf-bin/jazzer|' {filepath}",
         f"sed -i 's|/out/jazzer-orig-bin/jazzer|timeout 360 /out/jazzer-orig-bin/jazzer|' {filepath}"
     ]:
@@ -119,8 +119,8 @@ def process_image(image):
 # Get the list of docker images
 cmd = ["docker", "image", "ls", "--format", "{{.Repository}}"]
 images = run_cmd(cmd).splitlines()
-# only try 4 for now
-images = images[:4]
+# only try 2 for now
+images = images[:2]
 
 # Filter out the unwanted images
 filtered_images = [img for img in images if img not in ["smfbase", "gcr.io/oss-fuzz-base/base-builder-jvm"]]

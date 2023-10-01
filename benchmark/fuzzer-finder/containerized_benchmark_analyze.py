@@ -48,8 +48,10 @@ for container in container_list.strip().split("\n"):
         smf_output = run_command(f"docker exec {container_id} cat /out/{output_files['smf']}")
         jazzer_output = run_command(f"docker exec {container_id} cat /out/{output_files['jazzer']}")
 
-        smf_cov = int(run_command(f"docker exec {container_id} python3 /out/parse_text_coverage_report.py /out/{fuzzer}FuzzerSMFCovReport"))
-        jazzer_cov = int(run_command(f"docker exec {container_id} python3 /out/parse_text_coverage_report.py /out/{fuzzer}FuzzerCovReport"))
+        smf_cov_text = run_command(f"docker exec {container_id} python3 /out/parse_text_coverage_report.py /out/{fuzzer}FuzzerSMFCovReport")
+        smf_cov = int(smf_cov_text.split()[-1])
+        jazzer_cov_text = run_command(f"docker exec {container_id} python3 /out/parse_text_coverage_report.py /out/{fuzzer}FuzzerCovReport")
+        jazzer_cov = int(jazzer_cov_text.split()[-1])
 
         smf_throughput = get_throughput(smf_output)
         jazzer_throughput = get_throughput(jazzer_output)

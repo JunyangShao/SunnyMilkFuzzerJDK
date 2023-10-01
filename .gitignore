@@ -44,3 +44,6 @@ jzr_out*/
 */containerOut/*
 
 smfbase.tar
+
+jazzer/janino_test/
+benchmark/fuzzer-finder/coverage_reports/
