@@ -97,9 +97,9 @@ def process_fuzzer(image, container_id, fuzzer):
     for suffix in ["Output", "CovReport", "Corpus"]:
         run_cmd(["docker", "cp", f"{container_id}:{filepath}{suffix}", f"{local_dir}/{fuzzer}{suffix}"])
 
-def process_image(image):
-    # Create a container and start it, keeping it running in the background
-    container_id = run_cmd(["docker", "run", "-d", image, "tail", "-f", "/dev/null"]).strip()
+def process_image(image, starting_cpu, ending_cpu):
+    # Create a container and start it with cpu bindings, keeping it running in the background
+    container_id = run_cmd(["docker", "run", "-d", "--cpuset-cpus", f"{starting_cpu}-{ending_cpu}", image, "tail", "-f", "/dev/null"]).strip()
 
     # List files in /out/ directory of the container
     cmd = ["docker", "exec", container_id, "ls", "/out/"]
@@ -116,19 +116,57 @@ def process_image(image):
     # Cleanup: stop and remove the container
     # run_cmd(["docker", "rm", "-f", container_id])
 
+def get_fuzzer_counts(images):
+    # Go over `images` and count the number of fuzzers for each image, return a map of it
+    fuzzer_counts = {}
+    for image in images:
+        container_id = run_cmd(["docker", "run", "-d", image, "tail", "-f", "/dev/null"]).strip()
+        cmd = ["docker", "exec", container_id, "ls", "/out/"]
+        files = run_cmd(cmd).splitlines()
+        fuzzers = [f for f in files if f.endswith("Fuzzer") or f.endswith("FuzzerSMF")]
+        fuzzer_counts[image] = len(fuzzers)
+        run_cmd(["docker", "rm", "-f", container_id])
+    
+    return fuzzer_counts
+
 # Get the list of docker images
 cmd = ["docker", "image", "ls", "--format", "{{.Repository}}"]
 images = run_cmd(cmd).splitlines()
-# only try 2 for now
-images = images[:2]
+# only try 10 for now
+images = images[:10]
 
 # Filter out the unwanted images
 filtered_images = [img for img in images if img not in ["smfbase", "gcr.io/oss-fuzz-base/base-builder-jvm"]]
 
+core_number = 12
+
+# Get the number of fuzzers for each image
+# If there is an image with fuzzer count > core_number, then skip it.
+fuzzer_counts = get_fuzzer_counts(filtered_images)
+for image, count in fuzzer_counts.items():
+    if count > core_number:
+        print(f"Skipping {image} with {count} fuzzers.")
+        filtered_images.remove(image)
+        fuzzer_counts.pop(image)
+
 # Parallelizing the loop over images
 with concurrent.futures.ThreadPoolExecutor() as executor:
-    futures = [executor.submit(process_image, image) for image in filtered_images]
-    for future in concurrent.futures.as_completed(futures):
-        future.result()
+    # Batch it. Go over filtered_images, and infer the batch by allowing no more than core_number fuzzers per batch.
+    while len(filtered_images) > 0:
+        image_batch = []
+        used_core = 0
+        for image in filtered_images.copy():  # Use a copy to avoid modifying the original list during iteration
+            # The filter above should have removed all images with fuzzer count > core_number
+            if used_core + fuzzer_counts[image] > core_number:
+                break
+            filtered_images.remove(image)
+            image_batch.append((image, used_core, used_core + fuzzer_counts[image] - 1))
+            used_core += fuzzer_counts[image]
+            if used_core >= core_number:
+                break
+
+        futures = [executor.submit(process_image, image, starting_cpu, ending_cpu) for image, starting_cpu, ending_cpu in image_batch]
+        for future in concurrent.futures.as_completed(futures):
+            future.result()
 
 print("Finished processing all images and fuzzers.")
