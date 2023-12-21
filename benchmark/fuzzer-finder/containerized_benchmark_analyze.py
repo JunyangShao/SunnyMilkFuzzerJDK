@@ -13,8 +13,12 @@ def get_throughput(file_content):
 # Get the list of active docker containers
 container_list = run_command("docker ps --format '{{.ID}} {{.Image}}'")
 
+result_f = open("benchmark_result_simple.txt", "w")
+
 # Print header
-print('{:40s}{:40s}{:10s}{:10s}{:20s}{:20s}'.format('ImageName', 'FuzzerName', 'CovSMF', 'CovJazzer', 'CovSMF/Jazzer', 'ThruputSMF/Jazzer'))
+head_s = '{:40s}{:40s}{:10s}{:10s}{:20s}{:20s}'.format('ImageName', 'FuzzerName', 'CovSMF', 'CovJazzer', 'CovSMF/Jazzer', 'ThruputSMF/Jazzer')
+print(head_s)
+result_f.write(head_s + "\n")
 
 for container in container_list.strip().split("\n"):
     container_id, image_name = container.split()
@@ -57,8 +61,12 @@ for container in container_list.strip().split("\n"):
         jazzer_throughput = get_throughput(jazzer_output)
 
         # Handle division by zero for ratio calculation
-        cov_ratio = '{:7.2f}'.format(smf_cov / jazzer_cov) if jazzer_cov else '-'
-        throughput_ratio = '{:7.2f}'.format(smf_throughput / jazzer_throughput) if jazzer_throughput else '-'
+        cov_ratio = '{:7.2f}'.format(smf_cov / jazzer_cov) if jazzer_cov else '   -   '
+        throughput_ratio = '{:7.2f}'.format(smf_throughput / jazzer_throughput) if jazzer_throughput else '   -   '
 
         # print(f"{ image_name:<20 }{ fuzzer:<20 }{ smf_cov:<20 }{ jazzer_cov:<20 }{ cov_ratio:<20 }{ throughput_ratio:<20 }")
-        print('{:40s}{:40s}{:10s}{:10s}{:20s}{:20s}'.format(image_name, fuzzer, str(smf_cov), str(jazzer_cov), cov_ratio, throughput_ratio))
+        line_s = '{:40s}{:40s}{:10s}{:10s}{:20s}{:20s}'.format(image_name, fuzzer, str(smf_cov), str(jazzer_cov), cov_ratio, throughput_ratio)
+        print(line_s)
+        result_f.write(line_s + "\n")
+
+result_f.close()
