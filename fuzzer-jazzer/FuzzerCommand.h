@@ -147,7 +147,7 @@ public:
   std::string toString() const {
     std::stringstream SS;
     bool first_arg = true;
-    for (const auto &arg : getArguments()) {
+    for (auto arg : getArguments()) {
       if (first_arg) {
         SS << arg << " ";
         first_arg = false;

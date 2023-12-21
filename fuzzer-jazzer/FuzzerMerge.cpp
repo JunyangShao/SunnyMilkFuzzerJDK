@@ -77,7 +77,6 @@ bool Merger::Parse(std::istream &IS, bool ParseCoverage) {
   size_t ExpectedStartMarker = 0;
   const size_t kInvalidStartMarker = -1;
   size_t LastSeenStartMarker = kInvalidStartMarker;
-  bool HaveFtMarker = true;
   std::vector<uint32_t> TmpFeatures;
   std::set<uint32_t> PCs;
   while (std::getline(IS, Line, '\n')) {
@@ -94,13 +93,12 @@ bool Merger::Parse(std::istream &IS, bool ParseCoverage) {
       LastSeenStartMarker = ExpectedStartMarker;
       assert(ExpectedStartMarker < Files.size());
       ExpectedStartMarker++;
-      HaveFtMarker = false;
     } else if (Marker == "FT") {
       // FT FILE_ID COV1 COV2 COV3 ...
       size_t CurrentFileIdx = N;
       if (CurrentFileIdx != LastSeenStartMarker)
         return false;
-      HaveFtMarker = true;
+      LastSeenStartMarker = kInvalidStartMarker;
       if (ParseCoverage) {
         TmpFeatures.clear();  // use a vector from outer scope to avoid resizes.
         while (ISS1 >> N)
@@ -110,8 +108,6 @@ bool Merger::Parse(std::istream &IS, bool ParseCoverage) {
       }
     } else if (Marker == "COV") {
       size_t CurrentFileIdx = N;
-      if (CurrentFileIdx != LastSeenStartMarker)
-        return false;
       if (ParseCoverage)
         while (ISS1 >> N)
           if (PCs.insert(N).second)
@@ -120,7 +116,7 @@ bool Merger::Parse(std::istream &IS, bool ParseCoverage) {
       return false;
     }
   }
-  if (!HaveFtMarker && LastSeenStartMarker != kInvalidStartMarker)
+  if (LastSeenStartMarker != kInvalidStartMarker)
     LastFailure = Files[LastSeenStartMarker].Name;
 
   FirstNotProcessedFile = ExpectedStartMarker;

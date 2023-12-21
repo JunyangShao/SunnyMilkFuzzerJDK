@@ -29,11 +29,12 @@ namespace fuzzer {
 
 using namespace std::chrono;
 
-class Fuzzer final {
+class Fuzzer {
 public:
+
   Fuzzer(UserCallback CB, InputCorpus &Corpus, MutationDispatcher &MD,
-         const FuzzingOptions &Options);
-  ~Fuzzer() = delete;
+         FuzzingOptions Options);
+  ~Fuzzer();
   void Loop(std::vector<SizedFile> &CorporaFiles);
   void ReadAndExecuteSeedCorpora(std::vector<SizedFile> &CorporaFiles);
   void MinimizeCrashLoop(const Unit &U);

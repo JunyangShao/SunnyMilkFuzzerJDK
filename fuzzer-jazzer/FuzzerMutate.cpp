@@ -529,7 +529,7 @@ void MutationDispatcher::PrintMutationSequence(bool Verbose) {
 
 std::string MutationDispatcher::MutationSequence() {
   std::string MS;
-  for (const auto &M : CurrentMutatorSequence) {
+  for (auto M : CurrentMutatorSequence) {
     MS += M.Name;
     MS += "-";
   }
