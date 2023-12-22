@@ -36,6 +36,20 @@
 #endif
 
 namespace fuzzer {
+
+// For SunnyMilkFuzzer
+void (*SetGloablFeatureMap_ptr)(uint32_t*) = NULL;
+
+extern "C" ATTRIBUTE_INTERFACE void SetSetGloablFeatureMap(void (*setter)(uint32_t*)) {
+  SetGloablFeatureMap_ptr = setter;
+}
+
+void SetGlobalFeatureMap(uint32_t *TheMap) {
+  if (SetGloablFeatureMap_ptr) {
+    SetGloablFeatureMap_ptr(TheMap);
+  }
+}
+
 static const size_t kMaxUnitSizeToPrint = 256;
 
 thread_local bool Fuzzer::IsMyThread;
@@ -846,9 +860,10 @@ void Fuzzer::ReadAndExecuteSeedCorpora(std::vector<SizedFile> &CorporaFiles) {
            "far\n");
     // The remaining logic requires that the corpus is not empty,
     // so we add one fake input to the in-memory corpus.
+    std::chrono::seconds zero_seconds(0);
     Corpus.AddToCorpus({'\n'}, /*NumFeatures=*/1, /*MayDeleteFile=*/true,
                        /*HasFocusFunction=*/false, /*NeverReduce=*/false,
-                       /*TimeOfUnit=*/duration_cast<microseconds>(0s), {0}, DFT,
+                       /*TimeOfUnit=*/duration_cast<microseconds>(zero_seconds), {0}, DFT,
                        /*BaseII*/ nullptr);
   }
 }

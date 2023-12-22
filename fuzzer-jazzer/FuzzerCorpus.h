@@ -25,6 +25,10 @@
 
 namespace fuzzer {
 
+void SetGlobalFeatureMap(uint32_t *TheMap);
+
+extern "C" ATTRIBUTE_INTERFACE void SetSetGloablFeatureMap(void (*setter)(uint32_t*));
+
 struct InputInfo {
   Unit U;  // The actual input data.
   std::chrono::microseconds TimeOfUnit;
@@ -166,6 +170,7 @@ public:
       : Entropic(Entropic), OutputCorpus(OutputCorpus) {
     memset(InputSizesPerFeature, 0, sizeof(InputSizesPerFeature));
     memset(SmallestElementPerFeature, 0, sizeof(SmallestElementPerFeature));
+    SetGlobalFeatureMap(InputSizesPerFeature);
   }
   ~InputCorpus() {
     for (auto II : Inputs)
